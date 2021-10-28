@@ -52,7 +52,7 @@ shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            
                            # Third menu with sub-menu
                            navbarMenu("Visualization",
-                                      tabPanel("Pain"),
-                                      tabPanel("Sadness"),
-                                      tabPanel("Happiness"))
+                                      tabPanel("Pijn"),
+                                      tabPanel("Verdrietig"),
+                                      tabPanel("Blij"))
 ))

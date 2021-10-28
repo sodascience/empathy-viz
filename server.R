@@ -1,7 +1,7 @@
 library(shiny)
 # Read the survey questions
 Qlist <- read.csv("Qlist.csv")
-# Qlist <- Qlist[1,]
+
 
 shinyServer(function(input, output) {
   
