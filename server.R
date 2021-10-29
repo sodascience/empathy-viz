@@ -1,4 +1,5 @@
 library(shiny)
+
 # Read the survey questions
 Qlist <- read.csv("Qlist.csv")
 
@@ -7,6 +8,7 @@ shinyServer(function(input, output) {
   
   # Create an empty vector to hold survey results
   results <<- rep("", nrow(Qlist))
+  
   # Name each element of the vector based on the
   # second column of the Qlist
   names(results)  <<- Qlist[,2]
