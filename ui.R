@@ -1,15 +1,17 @@
+
+
 library(shiny)
 
-# Define UI for application that draws a histogram
+
 shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            # Application title
                            "Empathy Survey",
                            
-                           # First menu entry
+                           # Start Input-tab
                            tabPanel(
                              "Input",
                              
-                             # First menu body
+                             # Input-tab body
                              wellPanel(
                                style= "min-width: 300px;max-width: 400px;overflow:auto",
                                verticalLayout(
@@ -19,14 +21,16 @@ shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                  textInput("Code", placeholder = "Code", label = "Code:", width = "30%"),
                                  actionButton("OK.Input", "OK")
                                )
-                             )),
+                              )
+                             ),
+                            # End Input-tab
                            
                            
-                           # Second menu entry
+                           # Start Questionnaire-tab
                            tabPanel(
-                             "Questionnair",
+                             "Questionnaire",
                              
-                             # Second menu body
+                             # Progress bar
                              sidebarLayout(
                                sidebarPanel(
                                  p("Vraag 1 - pijn"),
@@ -39,20 +43,20 @@ shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                ),
                                
                                mainPanel(
-                                 # Main Action is where most everything is happenning in the
-                                 # object (where the welcome message, survey, and results appear)
                                  uiOutput("MainAction"),
-                                 # This displays the action putton Next.
+                                 
+                                 # Action button Next
                                  actionButton("Click.Counter", "Next")    
                                )
                              )
-                             
                            ),
+                          # End Questionnaire-tab 
                            
-                           
-                           # Third menu with sub-menu
+                           # Start Visualization-tab with sub-menu
                            navbarMenu("Visualization",
                                       tabPanel("Pijn"),
                                       tabPanel("Verdrietig"),
                                       tabPanel("Blij"))
+                          # End Questionnaire-tab 
+                   
 ))
