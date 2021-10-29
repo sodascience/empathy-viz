@@ -1,10 +1,26 @@
 library(shiny)
+library(shinyRadioMatrix)
+
 
 # Read the survey questions
 Qlist <- read.csv("Qlist.csv")
 
+# RadioMatrix Inputs- rows and columns
+  columnNames <- c("helemaal niet van toepassing", "een beetje van toepassing",
+                   "redelijk goed van toepassing", "sterk van toepassing", 
+                   "heel sterk van toepassing")
+  Columns = data.frame(columnNames)
+  
+  rowID <- c(1, 2, 3, 4, 5)
+  rowNames <- c("Ik voel pijn", "Ik moet er om lachen", "Ik raak van slag",
+                "Ik vind het naar voor haar", "Ik wil haar helpen")
+  rows = data.frame(rowID, rowNames)
+  
+
 
 shinyServer(function(input, output) {
+  
+  # output$debug01 <- renderPrint({input$rmi01})
   
   # Create an empty vector to hold survey results
   results <<- rep("", nrow(Qlist))
@@ -24,22 +40,20 @@ shinyServer(function(input, output) {
       paste0("Hits: ", counter)
     })
   
-  # This renderUI function holds the primary actions of the
-  # survey area.
+  # Hold the primary actions of the survey area
   output$MainAction <- renderUI( {
     dynamicUi()
   })
   
-  # Dynamic UI is the interface which changes as the survey
-  # progresses.  
+  # Dynamic UI interface changes as the survey progresses  
   dynamicUi <- reactive({
     
-    # Initially it shows a welcome message. 
+    # Initially show an introduction to survey 
     if (input$Click.Counter==0) 
       return(
         list(
           verticalLayout(
-            strong("Survay"),
+            strong("Survey"),
             p(style="text-align: justify;",
               "We maken het allemaal wel eens mee dat we zien dat iemand zich pijn doet,
                          verdrietig is of juist heel blij is. Als we zien dat iemand zich bijvoorbeeld snijdt,
@@ -95,15 +109,17 @@ shinyServer(function(input, output) {
           )
         )
       )
+    # End Introduction
   
-    # Once the next button has been clicked once we see each question
-    # of the survey.
+    # Update survey questions by clicking on Next-button
     if (input$Click.Counter>0 & input$Click.Counter<=nrow(Qlist))  
       return(
         list(
           h5(textOutput("question")),
-          radioButtons("survey", "Please Select:", 
-                       c("Prefer not to answer", option.list()))
+          radioMatrixInput(inputId = "rmi01", rowIDs = rows$rowID, 
+                           rowLLabels = rows$rowNames,
+                           choices = Columns$columnNames
+          )
         )
       )
     
@@ -128,11 +144,11 @@ shinyServer(function(input, output) {
     # After each click, save the results of the radio buttons.
     if ((input$Click.Counter>0)&(input$Click.Counter>!nrow(Qlist)))
       try(results[input$Click.Counter] <<- input$survey)
-    # try is used because there is a brief moment in which
+    # Try is used because of a brief moment in which
     # the if condition is true but input$survey = NULL
     
     # If the user has clicked through all of the survey questions
-    # then R saves the results to the survey file.
+    # then R saves the results to the survey file
     if (input$Click.Counter==nrow(Qlist)+1) {
       if (file.exists("survey.results.Rdata")) 
         load(file="survey.results.Rdata")
@@ -143,19 +159,18 @@ shinyServer(function(input, output) {
         paste("User", 1:nrow(presults))
       save(presults, file="survey.results.Rdata")
     }
-    # Because there has to be a UI object to call this
-    # function I set up render text that distplays the content
-    # of this funciton.
+    # There has to be a UI object to call this
+    # function. therefore, render text that displays the content
+    # of this function is set up
     ""
   })
   
-  # This function renders the table of results from the
-  # survey.
+  # Render the table of results from the survey
   output$surveyresults <- renderTable({
     t(summary(presults))
   })
   
-  # This renders the data downloader
+  # Render the data downloader
   output$downloadData <- downloadHandler(
     filename = "IndividualData.csv",
     content = function(file) {
@@ -163,17 +178,16 @@ shinyServer(function(input, output) {
     }
   )
   
-  # The option list is a reative list of elements that
-  # updates itself when the click counter is advanced.
+  # The option list is a reactive list of elements that
+  # updates itself when the click counter is advanced
   option.list <- reactive({
     qlist <- Qlist[input$Click.Counter,3:ncol(Qlist)]
-    # Remove items from the qlist if the option is empty.
-    # Also, convert the option list to matrix. 
+    # Remove items from the qlist if the option is empty
+    # Convert the option list to matrix
     as.matrix(qlist[qlist!=""])
   })
   
-  # This function show the question number (Q:)
-  # Followed by the question text.
+  # Show the question number (Q:) followed by the question text
   output$question <- renderText({
     paste0(
       "V", input$Click.Counter,":", 
