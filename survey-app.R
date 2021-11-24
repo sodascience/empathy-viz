@@ -1,9 +1,10 @@
-
-
 library(shiny)
+source("mod-question.R")
+source("mod-image.R")
+source("mod-input.R")
+source("questions.R")
 
-
-shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
+ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            # Application title
                            "Empathy Survey",
                            
@@ -15,11 +16,7 @@ shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                              wellPanel(
                                style= "min-width: 300px;max-width: 400px;overflow:auto",
                                verticalLayout(
-                                 h4("Background information"),
-                                 textInput("Gender", placeholder = "Gender", label = "Gender:", width = "30%"),
-                                 textInput("Age", placeholder = "Age", label = "Age:", width = "30%"),
-                                 textInput("Code", placeholder = "Code", label = "Code:", width = "30%"),
-                                 actionButton("OK.Input", "OK")
+                                 inputUI("inp1")
                                )
                               )
                              ),
@@ -33,20 +30,12 @@ shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                              # Progress bar
                              sidebarLayout(
                                sidebarPanel(
-                                 p("Vraag 1 - pijn"),
-                                 p("Vraag 2 - blijheid"),
-                                 p("Vraag 3 - droefheid"),
-                                 p("Vraag 4 - pijn"),
-                                 p("Vraag 5 - blijheid"),
-                                 p("Vraag 6 - droefheid")
+                                 imageUI("img1")
                                  
                                ),
                                
                                mainPanel(
-                                 uiOutput("MainAction"),
-                                 
-                                 # Action button Next
-                                 actionButton("Click.Counter", "Next")    
+                                 questionUI("surv1")   
                                )
                              )
                            ),
@@ -59,4 +48,11 @@ shinyUI(navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                       tabPanel("Blij"))
                           # End Questionnaire-tab 
                    
-))
+)
+server <- function(input, output, session) {
+  counter <- reactiveVal(0) 
+  questionServer("surv1", "data/introduction.csv","data/situations.csv","data/sub_situations.csv","data/RadioMatrixFrame.csv",counter)
+  imageServer("img1","data/situations.csv",counter)
+  inputServer("inp1")
+}
+shinyApp(ui, server)
