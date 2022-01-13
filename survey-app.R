@@ -7,6 +7,7 @@ source("questions.R")
 ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            # Application title
                            "Empathy Survey",
+                            shinyjs::useShinyjs(),
                            
                            # Start Input-tab
                            tabPanel(
@@ -51,6 +52,7 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
 )
 server <- function(input, output, session) {
   counter <- reactiveVal(0) 
+  
   questionServer("surv1", "data/introduction.csv","data/situations.csv","data/sub_situations.csv","data/RadioMatrixFrame.csv",counter)
   imageServer("img1","data/situations.csv",counter)
   inputServer("inp1")
