@@ -55,3 +55,8 @@ make.df.survey_result<- function(situation.no, sub.situation.no,question.no){
   return <- cbind(df.survey.result,q)
   
 }
+
+nullToNA <- function(x) {
+  x[sapply(x, is.null)] <- NA
+  return(x)
+}

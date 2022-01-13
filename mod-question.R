@@ -1,10 +1,17 @@
 source("questions.R")
 library(shinyRadioMatrix)
+library(shinyjs)
+
 questionUI <- function(id) {
   tagList(
   uiOutput(NS(id,"MainAction")),
+  
   # Action button Previous
-  actionButton(NS(id,"Click.CounterBack"), "Previous"),
+  actionButton(NS(id,"Click.CounterBack"), "<"),
+  
+  # Action button Download
+  actionButton(NS(id,"Click.Download"), "Download Results"),
+  
   # Action button Next
   actionButton(NS(id,"Click.Counter"), "Next"),
   #textOutput(NS(id,"surveyresults"))
@@ -37,11 +44,17 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
       
     })
     
+    # Subtract counter() by 1, if Previous is clicked
     observeEvent(input$Click.CounterBack, {
       save.survey.results()
       new.count <- ifelse(counter()>0,counter() - 1,counter())     
       counter(new.count)
-      
+    })
+    
+    # Download the results of survey locally
+    observeEvent(input$Click.Download, {
+      download.survey.results()
+      h4("Successfully downloaded!")
     })
     
     # Hold the primary actions of the survey area
@@ -53,6 +66,27 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
     # Dynamic UI interface changes as the survey progresses
     dynamicUi <- reactive({
       ns <- session$ns
+      
+      # show/hide previous button
+      if((counter() == 0)||(counter()==nrow(situations))){
+        shinyjs::hide(id = "Click.CounterBack")
+      }else{
+        shinyjs::show(id = "Click.CounterBack")
+      }
+
+      # show/hide next button
+      if (counter()==nrow(situations)){
+        shinyjs::hide(id = "Click.Counter")
+      }else{
+        shinyjs::show(id = "Click.Counter")
+      }
+      
+      # show/hide download button
+      if (counter()==nrow(situations)){
+        shinyjs::show(id = "Click.Download")
+      }else{
+        shinyjs::hide(id = "Click.Download")
+      }
       
       # Initially show an introduction to survey
       if (counter()==0)
@@ -72,20 +106,23 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
             radioMatrixInput(inputId = ns("rmi01"), 
                              rowIDs = radio.matrix.frame$qID,
                              rowLLabels = radio.matrix.frame[,counter()+1],
-                             choices = radio.matrix.frame$columnNames
+                             choices = radio.matrix.frame$columnNames,
+                             selected = upload.results(1)
             ),
   
             strong(textOutput(ns("sub_situation1"))),
             radioMatrixInput(inputId = ns("rmi02"), 
                              rowIDs = radio.matrix.frame$qID+5,
                              rowLLabels = radio.matrix.frame[,counter()+1],
-                             choices = radio.matrix.frame$columnNames
+                             choices = radio.matrix.frame$columnNames,
+                             selected = upload.results(2)
             ),
             strong(textOutput(ns("sub_situation2"))),
             radioMatrixInput(inputId = ns("rmi03"), 
                              rowIDs = radio.matrix.frame$qID+10,
                              rowLLabels = radio.matrix.frame[,counter()+1],
-                             choices = radio.matrix.frame$columnNames
+                             choices = radio.matrix.frame$columnNames,
+                             selected = upload.results(3)
             )
             
   
@@ -101,11 +138,10 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
             h4("View aggregate results"),
             tableOutput(ns("surveyresults")),
             h4("Thanks for taking the survey!")
-            # downloadButton('downloadData', 'Download Individual Results'),
-            # br(),
-            # h6("Haven't figured out how to get rid of 'next' button yet")
+            
           )
         )
+      
      })
     
     # Show the situation number (V:) followed by the situation description
@@ -126,40 +162,55 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
       sub_situations[2,c("Sub_Situation")]
     })
     
-    # saving the results of the survey for this individual.
+    # Save the results of the survey in memory.
     save.survey.results <- function(){
-      print(counter())
-      # After each click, save the results of the radio buttons.
+
+      # After each click, save the results of the radio buttons in df.
       if ((counter()>0)&(counter()<nrow(situations))){
         cond1 <- df.survey_result$situation == counter() &
           df.survey_result$sub.situation == 1
       
-        #try(df.survey_result[cond1,c('q1','q2','q3','q4','q5')] <- c(1,1,1,1,1))
-        try(df.survey_result[cond1,c('q1','q2','q3','q4','q5')] <<- input$rmi01)
-       
-        # Try is used because of a brief moment in which
-        # the if condition is true but input$survey = NULL
-
+        rmi01 <- nullToNA(input$rmi01)
+        try(df.survey_result[cond1,c('q1','q2','q3','q4','q5')] <<-rmi01)
+        
+        
         cond2 <- df.survey_result$situation == counter() &
           df.survey_result$sub.situation == 2
-        try(df.survey_result[cond2,c('q1','q2','q3','q4','q5')] <<-input$rmi02) #c(NULL,NULL,NULL,NULL,NULL)) )
+        
+        rmi02 <- nullToNA(input$rmi02)
+        try(df.survey_result[cond2,c('q1','q2','q3','q4','q5')] <<-rmi02) 
 
         cond3 <- df.survey_result$situation == counter() &
           df.survey_result$sub.situation == 3
-        try(df.survey_result[cond3,c('q1','q2','q3','q4','q5')] <<- input$rmi03)
-        print(df.survey_result)
-      }
-
-
-      # If the user has clicked through all of the survey questions
-      # then R saves the results to the survey file
-      if (counter()==nrow(situations)) {
         
-        save(df.survey_result, file="survey.results.Rdata")
+        rmi03 <- nullToNA(input$rmi03)
+        try(df.survey_result[cond3,c('q1','q2','q3','q4','q5')] <<- rmi03)
       }
+
+    }
+    
+    # Download the results of the survey.
+    download.survey.results <- function(){
+      # If the user click on download button
+      # then R saves the results in 'survey.results.Rdata' in working directory
+      
+      # working.dir <- getwd()
+      # file.path <- paste(working.dir ,"/survey.results.Rdata")
+      save(df.survey_result, file="survey.results.Rdata")
       
     }
     
+    upload.results <- function(sub.sit){
+      
+      # After each click, load the existing answers in to the radio buttons.
+      if ((counter()>0)&(counter()<nrow(situations))){
+        cond1 <- df.survey_result$situation == counter() &
+          df.survey_result$sub.situation == sub.sit
+        return (df.survey_result[cond1,c('q1','q2','q3','q4','q5')])
+      }
+      else
+        return (c(0,0,0,0,0))
+    }
     # Render the table of results from the survey
     output$surveyresults <- renderTable({
       df.survey_result
@@ -167,3 +218,4 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
     
   })
 }
+
