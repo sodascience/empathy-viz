@@ -170,22 +170,21 @@ questionServer <- function(id, intro_fp, situations_fp, sub_situations_fp,
         cond1 <- df.survey_result$situation == counter() &
           df.survey_result$sub.situation == 1
       
-        #try(df.survey_result[cond1,c('q1','q2','q3','q4','q5')] <- c(1,1,1,1,1))
-        print(input$rmi01[[1]])
-        try(df.survey_result[cond1,c('q1','q2','q3','q4','q5')] <<- c(input$rmi01[[1]],input$rmi01[[2]],input$rmi01[[3]],input$rmi01[[4]],input$rmi01[[5]]))
-       
-        # Try is used because of a brief moment in which
-        # the if condition is true but input$survey = NULL
-
+        rmi01 <- nullToNA(input$rmi01)
+        try(df.survey_result[cond1,c('q1','q2','q3','q4','q5')] <<-rmi01)
+        
+        
         cond2 <- df.survey_result$situation == counter() &
           df.survey_result$sub.situation == 2
-        print(input$rmi02[[1]])
-        try(df.survey_result[cond2,c('q1','q2','q3','q4','q5')] <<-input$rmi02) #c(NULL,NULL,NULL,NULL,NULL)) )
+        
+        rmi02 <- nullToNA(input$rmi02)
+        try(df.survey_result[cond2,c('q1','q2','q3','q4','q5')] <<-rmi02) 
 
         cond3 <- df.survey_result$situation == counter() &
           df.survey_result$sub.situation == 3
-        print(input$rmi03[[1]])
-        try(df.survey_result[cond3,c('q1','q2','q3','q4','q5')] <<- input$rmi03)
+        
+        rmi03 <- nullToNA(input$rmi03)
+        try(df.survey_result[cond3,c('q1','q2','q3','q4','q5')] <<- rmi03)
       }
 
     }
