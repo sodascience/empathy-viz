@@ -57,7 +57,7 @@ server <- function(input, output, session) {
   
   questionServer("surv1", "data/introduction.csv","data/vignettes.csv",
                  "data/relationships.csv","data/RadioMatrixFrame.csv",counter,input.data)
-  imageServer("img1","data/situations.csv",counter)
+  imageServer("img1","data/vignettes.csv",counter)
   inputServer("inp1",input.data)
 }
 shinyApp(ui, server)
