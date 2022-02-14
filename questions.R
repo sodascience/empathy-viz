@@ -1,3 +1,7 @@
+library(data.table)
+
+emotion_items <- c("empathie","sympathie","distress","gedrag","counter-empathie")
+relationship_items <- c("friend","stranger","foe")
 style_txt_itms <- function(txt){
   strong(p(style="text-align: justify;",
            txt,
@@ -16,7 +20,7 @@ get_introduction <- function(intro_fp){
 
 }
 
-get_situations <- function(stu_fp){
+get_vignettes <- function(stu_fp){
   # Read the list of situations
   df_stu <- read.csv(stu_fp)
   return (
@@ -25,7 +29,7 @@ get_situations <- function(stu_fp){
   
 }
 
-get_sub_situations <- function(sub_stu_fp){
+get_relationships <- function(sub_stu_fp){
   # Read the list of situations
   df_sub_stu <- read.csv(sub_stu_fp)
   return (
@@ -41,22 +45,39 @@ get_radioMatrixFrame <- function(rmf_fp){
   )
 }
 
-make.df.survey_result<- function(situation.no, sub.situation.no,question.no){
+make.df.survey_result<- function(vignette.no, relationship.no,emotion.no){
   
-  situation <-  rep(seq(1,situation.no), each = sub.situation.no)
-  sub.situation <- rep(seq(1,sub.situation.no),times=situation.no)
-  df.survey.result <- data.frame(situation,sub.situation)
+  vignette <-  rep(seq(1,vignette.no), each = relationship.no)
+  #sub.situation <- rep(seq(1,sub.situation.no),times=situation.no)
+  relationship <- rep(relationship_items,times=relationship.no)
+  df.survey.result <- data.frame(vignette,relationship)
   
-  q.names <- paste0('q',seq(1,question.no))
-  qval <- rep("", nrow(df.survey.result))
-  q<-as.data.frame(matrix(qval, nrow=length(qval), ncol=question.no))
-  colnames(q)<- q.names
-  
-  return <- cbind(df.survey.result,q)
+  #q.names <- paste0('q',seq(1,question.no))
+  em.names <- emotion_items
+  emval <- rep("", nrow(df.survey.result))
+  em<-as.data.frame(matrix(emval, nrow=length(emval), ncol=emotion.no))
+  colnames(em)<- em.names
+  df <- cbind(df.survey.result,em)
+   
+  df$relationship <- factor(df$relationship, levels = c("friend","stranger","foe") )
+  df$vignette <- factor(df$vignette)
+  return(df)
   
 }
 
 nullToNA <- function(x) {
   x[sapply(x, is.null)] <- NA
   return(x)
+}
+
+refactor_df <- function(df){
+  # wide.to.long 
+  long <- melt(setDT(df), id.vars=c("vignette","relationship"))
+  names(long) <- c("vignette","relationship","emotion","value")
+  
+  # string -> categorical with specific levels -> number
+  long$value<- factor(long$value, levels = c("helemaal niet","een beetje","redelijk goed","sterk","heel sterk") )
+  long$value.num <- as.numeric(long$value)
+  
+  return(long)
 }
