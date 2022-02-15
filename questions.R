@@ -1,7 +1,7 @@
 library(data.table)
-
 emotion_items <- c("empathie","sympathie","distress","gedrag","counter-empathie")
 relationship_items <- c("friend","stranger","foe")
+
 style_txt_itms <- function(txt){
   strong(p(style="text-align: justify;",
            txt,
@@ -21,7 +21,7 @@ get_introduction <- function(intro_fp){
 }
 
 get_vignettes <- function(stu_fp){
-  # Read the list of situations
+  # Read the list of vignettes
   df_stu <- read.csv(stu_fp)
   return (
     df_stu
@@ -30,7 +30,7 @@ get_vignettes <- function(stu_fp){
 }
 
 get_relationships <- function(sub_stu_fp){
-  # Read the list of situations
+  # Read the list of vignettes
   df_sub_stu <- read.csv(sub_stu_fp)
   return (
     df_sub_stu
@@ -58,7 +58,7 @@ make.df.survey_result<- function(vignette.no, relationship.no,emotion.no){
   em<-as.data.frame(matrix(emval, nrow=length(emval), ncol=emotion.no))
   colnames(em)<- em.names
   df <- cbind(df.survey.result,em)
-   
+  
   df$relationship <- factor(df$relationship, levels = c("friend","stranger","foe") )
   df$vignette <- factor(df$vignette)
   return(df)
@@ -79,5 +79,16 @@ refactor_df <- function(df){
   long$value<- factor(long$value, levels = c("helemaal niet","een beetje","redelijk goed","sterk","heel sterk") )
   long$value.num <- as.numeric(long$value)
   
+  # add 'vign_cat', to show pain, sad and happiness
+  cond_pain <- (long$vignette =='1') | (long$vignette =='4')
+  long[cond_pain,"vign_cat"] <-"pain"
+  
+  cond_happy <- (long$vignette =='2') | (long$vignette =='5')
+  long[cond_happy,"vign_cat"] <-"happiness"
+  
+  cond_sad <- (long$vignette =='3') | (long$vignette =='6')
+  long[cond_sad,"vign_cat"] <-"sadness"
+  
+  long$vign_cat <- factor(long$vign_cat, levels = c("pain","happiness","sadness") )
   return(long)
 }
