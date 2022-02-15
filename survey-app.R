@@ -28,11 +28,9 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            tabPanel(
                              "Questionnaire",
                              
-                             # Progress bar
                              sidebarLayout(
                                sidebarPanel(
                                  imageUI("img1")
-                                 
                                ),
                                
                                mainPanel(
@@ -42,19 +40,24 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            ),
                           # End Questionnaire-tab 
                            
-                           # Start Visualization-tab with sub-menu
-                           navbarMenu("Visualization",
-                                      tabPanel("Pijn"),
-                                      tabPanel("Verdrietig"),
-                                      tabPanel("Blij"))
-                          # End Questionnaire-tab 
+                        # Start Visualization-tab with sub-menu
+                        navbarMenu("Visualization",
+                                  tabPanel("Pijn"),
+                                  tabPanel("Verdrietig"),
+                                  tabPanel("Blij"))
+                   
+                        # End Visualization-tab
                    
 )
 server <- function(input, output, session) {
+  input.data <- reactiveValues(gender = NULL, age = NULL, code = NULL)
   counter <- reactiveVal(0) 
+  df.survey <- reactiveValues(data = NULL, current = NULL)
   
-  questionServer("surv1", "data/introduction.csv","data/situations.csv","data/sub_situations.csv","data/RadioMatrixFrame.csv",counter)
-  imageServer("img1","data/situations.csv",counter)
-  inputServer("inp1")
+  
+  questionServer("surv1", "data/introduction.csv","data/vignettes.csv",
+                 "data/relationships.csv","data/RadioMatrixFrame.csv",counter,input.data)
+  imageServer("img1","data/vignettes.csv",counter)
+  inputServer("inp1",input.data)
 }
 shinyApp(ui, server)
