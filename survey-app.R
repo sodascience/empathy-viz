@@ -10,7 +10,7 @@ source("mod-visRelEmo.R")
 
 ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            # Application title
-                           "Empathy Survey",
+                           "Empathie in Beeld",
                             shinyjs::useShinyjs(),
                            
                            # Start Input-tab
@@ -30,17 +30,19 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            
                            # Start Questionnaire-tab
                            tabPanel(
-                             "Questionnaire",
+                             "Vragenlijst",
                              
                              # Progress bar
                              sidebarLayout(
                                sidebarPanel(
-                                 imageUI("img1")
+                                 imageUI("img1"),
+                                 width = 3
                                  
                                ),
                                
                                mainPanel(
-                                 questionUI("surv1")   
+                                 questionUI("surv1") ,
+                                 width = 9
                                )
                              )
                            ),
@@ -48,18 +50,22 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            
                            # Start Visualization-tab
                          tabPanel(
-                           "Visualization",
+                           "Visualisatie",
                            tabsetPanel(
                              tabPanel("DataSet",
                                       visDatasetUI("visDataset1")
                              ),
-                             tabPanel("Relationship",
-                                      visRelationshipUI("visRelationship1")
+                             
+                             navbarMenu("Dynamiek in relaties",
+                                        tabPanel("Blijdschap",visRelationshipUI("visRelationship2")),
+                                        tabPanel("Verdriet",visRelationshipUI("visRelationship3")),
+                                        tabPanel("Pijn",visRelationshipUI("visRelationship1"))
+                                      
                              ),
-                             tabPanel("Emotions",
+                             tabPanel("Dynamiek in emoties",
                                       visEmotionUI("visEmotion1")
                              ),
-                             tabPanel("Relationship_Emotions",
+                             tabPanel("Relaties X Emoties",
                                       visRelEmoUI("visRelEmo1"))
                            ))
                           # End Visualization-tab 
@@ -68,16 +74,19 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
 server <- function(input, output, session) {
   counter <- reactiveVal(0)
   input.data <- reactiveValues(gender = NULL, age = NULL, code = NULL)
-  df.survey <- reactiveValues(data = NULL, current = NULL)
+  df.survey <- reactiveValues(data = NULL)
+  df.vis <- reactiveValues(data = NULL)
   
   questionServer("surv1", "data/introduction.csv","data/vignettes.csv",
                  "data/relationships.csv", "data/RadioMatrixFrame.csv",
-                 counter,input.data,df.survey)
+                 "data/ending.csv",counter,input.data,df.survey)
   imageServer("img1","data/vignettes.csv",counter)
   inputServer("inp1",input.data)
-  visDatasetServer("visDataset1",df.survey)
-  visRelationshipServer("visRelationship1",df.survey)
-  visEmotionServer("visEmotion1",df.survey)
-  visRelEmoServer("visRelEmo1",df.survey)
+  visDatasetServer("visDataset1",df.survey, df.vis)
+  visRelationshipServer("visRelationship1",df.vis,'pijn')
+  visRelationshipServer("visRelationship2",df.vis,'blijdschap')
+  visRelationshipServer("visRelationship3",df.vis,'verdriet')
+  visEmotionServer("visEmotion1",df.vis)
+  visRelEmoServer("visRelEmo1",df.vis)
 }
 shinyApp(ui, server)

@@ -13,15 +13,17 @@ imageServer <- function(id, vignettes_fp, counter) {
     
     get_image_name <-reactive({
       print(counter())
-      ifelse(counter()<nrow(vignettes),
-             vignettes[vignettes$Vnum==counter(),c("Img")],
-             vignettes[vignettes$Vnum==0,c("Img")] ) 
+      if((counter()<2)||(counter()>nrow(vignettes))){
+        vignettes[vignettes$Vnum==0,c("Img")] 
+      }else{
+        vignettes[vignettes$Vnum==counter()-1,c("Img")]
+      }
     })
     
     output$img <- renderImage({
       list(src = get_image_name(),
            contentType = "image/jpg",
-           width = "100%",
+           width = "80%",
            height = "45%")},
       deleteFile = FALSE) 
     })

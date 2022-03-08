@@ -8,3 +8,5 @@ My_Theme = theme(
   legend.text = element_text(size = 14))
 
 theme_set(theme_minimal())
+
+emotion.colorCode <- c("empathie"="#3c6ff8","sympathie"="#bb4a54","distress"="#afd68d","gedrag"="#a07497","counter-empathie"="#769fce")
