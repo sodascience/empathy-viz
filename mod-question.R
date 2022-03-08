@@ -1,6 +1,9 @@
 source("questions.R")
 library(shinyRadioMatrix)
 library(shinyjs)
+library("writexl")
+library("shinyWidgets")
+library(gridExtra)
 
 questionUI <- function(id) {
   tagList(
@@ -9,18 +12,21 @@ questionUI <- function(id) {
   # Action button Previous
   actionButton(NS(id,"Click.CounterBack"), "<"),
   
-  # Action button Download
-  downloadButton(NS(id,"Click.Download"), "Download Results"),
-  
   # Action button Next
-  actionButton(NS(id,"Click.Counter"), "Next"),
-  #textOutput(NS(id,"surveyresults"))
-  
+  actionButton(NS(id,"Click.Counter"), "Volgende"),
+ 
+  progressBar(
+    id = NS(id,"pb"),
+    value = 1,
+    total = 10,
+    title = "",
+    display_pct = TRUE
+  ),
   )
 }
 
 questionServer <- function(id, intro_fp, vignette_fp, relationship_fp, 
-                           rmf_fp, counter, input.data, df.survey) {
+                           rmf_fp, ending_fp, counter, input.data, df.survey) {
   moduleServer(id, function(input, output, session) {
     
     # Read list of described situations
@@ -29,7 +35,8 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     relationships <- get_relationships(relationship_fp)
     # Read radio-buttons rows and columns
     radio.matrix.frame <- get_radioMatrixFrame(rmf_fp)
-    
+    # Read text/image of the ending page
+    end.df <- get_ending(ending_fp)
     # Read user's general data
     user.gender <- reactive({input.data$gender})
     user.age <- reactive({input.data$age})
@@ -43,23 +50,19 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
                                              nrow(radio.matrix.frame))
     
     
-    
-    # df.survey$current is used in visualization. 
-    # Its value is allways the current survey data
-    df.survey$current <- make.df.survey_result(nrow(vignettes)-1,
-                                               nrow(relationships)+1,
-                                               nrow(radio.matrix.frame))
     # Add to counter() by 1, if Next is clicked
     observeEvent(input$Click.Counter, {
-      save.survey.results()
-      new.count <- ifelse(counter()<nrow(vignettes),counter() + 1, counter())   
-      counter(new.count)
-      
-      
-      # change data structure to long format, used in visualization
-      if (counter()==nrow(vignettes)){
-        df.survey$current<- refactor_df(df.survey$current)
-      }
+      if (check.complete.survey()){
+        save.survey.results()
+        new.count <- ifelse(counter()<=nrow(vignettes)+1,counter() + 1, counter())   
+        counter(new.count)
+        
+        updateProgressBar(
+          session = session,
+          id = "pb",
+          value = counter()+1, total = 10
+        )
+    }
     })
     
     # Subtract counter() by 1, if Previous is clicked
@@ -67,13 +70,13 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
       save.survey.results()
       new.count <- ifelse(counter()>0,counter() - 1,counter())     
       counter(new.count)
+      updateProgressBar(
+        session = session,
+        id = "pb",
+        value = counter()+1, total = 10
+      )
     })
     
-    # # Download the results of survey locally
-    # observeEvent(input$Click.Download, {
-    #   download.survey.results()
-    #   h4("Successfully downloaded!")
-    # })
     
     # Hold the primary actions of the survey area
     output$MainAction <- renderUI({
@@ -93,17 +96,11 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
       }
 
       # show/hide next button
-      if (counter()==nrow(vignettes)){
+      if (counter()==(nrow(vignettes)+2)){
         shinyjs::hide(id = "Click.Counter")
       }else{
         shinyjs::show(id = "Click.Counter")
-      }
-      
-      # show/hide download button
-      if (counter()==nrow(vignettes)){
-        shinyjs::show(id = "Click.Download")
-      }else{
-        shinyjs::hide(id = "Click.Download")
+       
       }
       
       # Initially show an introduction to survey
@@ -111,19 +108,28 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         return(
           list(
             verticalLayout(
-                get_introduction(intro_fp)
+                get_introduction(intro_fp,1)
+            )
+          )
+        )
+      
+      if (counter()==1)
+        return(
+          list(
+            verticalLayout(
+              get_introduction(intro_fp,2)
             )
           )
         )
       # End Introduction
       # Update survey questions by clicking on Next-button
-      if (counter()>0 & counter()<nrow(vignettes))
+      if (counter()>1 & counter()<(nrow(vignettes)+1))
         return(
           list(
             strong(textOutput(ns("vignette.desc"))),
             radioMatrixInput(inputId = ns("rmi01"), 
                              rowIDs = radio.matrix.frame$qID,
-                             rowLLabels = radio.matrix.frame[,counter()+1],
+                             rowLLabels = radio.matrix.frame[,counter()],
                              choices = radio.matrix.frame$columnNames,
                              selected = upload.results(relationship_items[1])
             ),
@@ -131,14 +137,14 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
             strong(textOutput(ns("relationship1"))),
             radioMatrixInput(inputId = ns("rmi02"), 
                              rowIDs = radio.matrix.frame$qID+5,
-                             rowLLabels = radio.matrix.frame[,counter()+1],
+                             rowLLabels = radio.matrix.frame[,counter()],
                              choices = radio.matrix.frame$columnNames,
                              selected = upload.results(relationship_items[2])
             ),
             strong(textOutput(ns("relationship2"))),
             radioMatrixInput(inputId = ns("rmi03"), 
                              rowIDs = radio.matrix.frame$qID+10,
-                             rowLLabels = radio.matrix.frame[,counter()+1],
+                             rowLLabels = radio.matrix.frame[,counter()],
                              choices = radio.matrix.frame$columnNames,
                              selected = upload.results(relationship_items[3])
             )
@@ -147,15 +153,37 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
           )
         )
       
-      # Finally we see results of the survey as well as a
-      # download button.
-      if (counter()==nrow(vignettes))
+      if (counter()==(nrow(vignettes)+1)){
+        
         return(
           list(
-            h4("Thank you for completing our survey!!"),
-            h4("View aggregate results"),
+
+            fluidRow(
+              column(8, align="center",
+                     h2(end.df[1,'text'], style = "font-weight: 500; color: black;"),
+                     h2(" "),
+                     imageOutput(ns("img.hooray"))
+              )
+            )
+          )
+        )
+    }
+      if (counter()==(nrow(vignettes)+2))
+        return(
+          list(
+            h4("Enquêteresultaten downloaden:"),
+            # Action button Download csv
+            downloadButton(ns("Click.Download.csv"), "CSV downloaden"),
+            
+            # Action button Download excel
+            downloadButton(ns("Click.Download.excel"), "Excel downloaden"),
+            
+            # Action button Download pdf
+            downloadButton(ns("Click.Download.pdf"), "PDF downloaden"),
+            
+            h4("Geaggregeerde resultaten bekijken"),
             tableOutput(ns("surveyresults"))
-           
+            
           )
         )
       
@@ -164,8 +192,8 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     # Show the situation number (V:) followed by the situation description
     output$vignette.desc <- renderText({
       paste0(
-        "V", counter(),":", #counter$countervalue
-        vignettes[vignettes$Vnum==counter(),c("Vignette_desc")]
+        "V", counter()-1,":",
+        vignettes[vignettes$Vnum==(counter()-1),c("Vignette_desc")]
       )
     })
     
@@ -181,62 +209,89 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     
     # Save the results of the survey in memory.
     save.survey.results <- function(){
-
       # After each click, save the results of the radio buttons in df.
-      if ((counter()>0)&(counter()<nrow(vignettes))){
-        cond1 <- df.survey_result()$vignette == counter() &
-          df.survey_result()$relationship == relationship_items[1]
+      if ((counter()>1)&(counter()<=nrow(vignettes))){
+        cond1 <- df.survey_result()$vignet == (counter()-1) &
+          df.survey_result()$relatie == relationship_items[1]
         
         rmi01 <- nullToNA(input$rmi01)
         try(df.survey$data[cond1,emotion_items] <<-rmi01)
-        try(df.survey$current[cond1,emotion_items] <<-rmi01)
         
-        cond2 <- df.survey_result()$vignette == counter() &
-          df.survey_result()$relationship == relationship_items[2]
+        
+        cond2 <- df.survey_result()$vignet == (counter()-1) &
+          df.survey_result()$relatie == relationship_items[2]
         
         rmi02 <- nullToNA(input$rmi02)
         try(df.survey$data[cond2,emotion_items] <<-rmi02)
-        try(df.survey$current[cond2,emotion_items] <<-rmi02)
         
-        cond3 <- df.survey_result()$vignette == counter() &
-          df.survey_result()$relationship == relationship_items[3]
+        
+        cond3 <- df.survey_result()$vignet == (counter()-1) &
+          df.survey_result()$relatie == relationship_items[3]
         
         rmi03 <- nullToNA(input$rmi03)
         try(df.survey$data[cond3,emotion_items] <<- rmi03)
-        try(df.survey$current[cond3,emotion_items] <<- rmi03)
+        
       }
       
     }
     
-    # # Download the results of the survey.
-    # download.survey.results <- function(){
-    #   # If the user click on download button
-    #   # then R saves the results in 'survey.results.Rdata' in working directory
-    #   
-    #   # working.dir <- getwd()
-    #   # file.path <- paste(working.dir ,"/survey.results.Rdata")
-    #   
-    #   long.survey_result <- refactor_df(df.survey_result())
-    #   write.csv2(long.survey_result, "survery_results.csv", row.names = FALSE )
-    #   save(df.survey_result, file="survey.results.Rdata")
-    #   
-    # }
-    
-    output$Click.Download <- downloadHandler(
+    # check all questions are answered.
+    check.complete.survey<- function(){
+      hasNull_1 <- any(sapply(input$rmi01, is.null))
+      hasNull_2 <- any(sapply(input$rmi02, is.null))
+      hasNull_3 <- any(sapply(input$rmi03, is.null))
+      if(hasNull_1 || hasNull_2 || hasNull_3){
+        showModal(modalDialog(
+          title = "Error!",
+          "Gelieve alle vragen te beantwoorden!",
+          footer = modalButton("OK"),
+        ))
+        
+        return (FALSE)  
+      }
+      else
+        return (TRUE)
+      
+    }
+   
+    output$Click.Download.csv <- downloadHandler(
            filename = function() {
                 paste("data", user.gender(),user.age(),user.code(), ".csv", sep="-")
           },
           content = function(file) {
+                print(df.survey_result())
                 long.survey_result <- refactor_df(df.survey_result())
                 write.csv(long.survey_result, file)
           }
       )
+    
+    output$Click.Download.excel <- downloadHandler(
+      filename = function() {
+        paste("data", user.gender(),user.age(),user.code(), ".xlsx", sep="-")
+      },
+      content = function(file) {
+        numeric.survey.result <- to_numeric_df(df.survey_result())
+        write_xlsx(numeric.survey.result, file)
+      }
+    )
+    
+    output$Click.Download.pdf <- downloadHandler(
+      filename = function() {
+        paste("data", user.gender(),user.age(),user.code(), ".pdf", sep="-")
+      },
+      content = function(file) {
+        numeric.survey.result <- to_numeric_df(df.survey_result())
+        pdf(file = file)
+        grid.table(numeric.survey.result)
+        dev.off()
+      }
+    )
     upload.results <- function(sub.sit){
       # After each click, load the existing answers in to the radio buttons.
-      if ((counter()>0)&(counter()<nrow(vignettes))){
+      if ((counter()>1)&(counter()<=nrow(vignettes))){
         
-        cond1 <- df.survey_result()$vignette == counter() &
-          df.survey_result()$relationship == sub.sit
+        cond1 <- df.survey_result()$vignet == (counter()-1) &
+          df.survey_result()$relatie == sub.sit
         return (df.survey_result()[cond1,emotion_items])
       }
       else
@@ -244,9 +299,16 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     }
     # Render the table of results from the survey
     output$surveyresults <- renderTable({
-      df.survey_result()
+      to_numeric_df(df.survey_result())
     })
     
+    output$img.hooray <- renderImage({
+      list(src = end.df[1,'img'],
+           contentType = "image/jpg",
+           width = "85",
+           height = "73")},
+      deleteFile = FALSE) 
+
   })
 }
 
