@@ -8,7 +8,7 @@ imageUI <- function(id) {
 imageServer <- function(id, vignettes_fp, counter) {
   moduleServer(id, function(input, output, session) {
     
-    # Read list of described situations
+    # Read list of described vignettes
     vignettes <- get_vignettes(vignettes_fp)
     
     get_image_name <-reactive({
