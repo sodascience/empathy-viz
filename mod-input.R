@@ -1,13 +1,13 @@
 source("questions.R")
 inputUI <- function(id) {
   tagList(
-    h4("Background information"),
+    h4("Achtergrond Informatie"),
     selectInput(NS(id,"Gender"), "Gender:",
-                c("select your gender:" = "select",
-                  "Male" = "male",
-                  "Female" = "female",
-                  "Other" = "other")),
-    textInput(NS(id,"Age"), placeholder = "Age", label = "Age:", width = "30%"),
+                c("kies je geslacht:" = "select",
+                  "Mannelijk" = "male",
+                  "Vrouwelijk" = "female",
+                  "Ander" = "other")),
+    textInput(NS(id,"Age"), placeholder = "Leeftijd", label = "Leeftijd:", width = "30%"),
     textInput(NS(id,"Code"), placeholder = "Code", label = "Code:", width = "30%"),
     actionButton(NS(id,"OK.Input"), "OK"),
     h5(textOutput(NS(id,"Message"), container = span))
@@ -17,17 +17,50 @@ inputUI <- function(id) {
 inputServer <- function(id, input.data) {
   moduleServer(id, function(input, output, session) {
     
+    
+    check.valid.input <- function(){
+      if(nchar(input$Age)>3)
+      {
+        updateTextInput(session,'Age',value=substr(input$Age,1,3))
+        showModal(modalDialog(
+          title = "Fout!",
+          "Leeftijdsgrens overschreden!"
+        ))
+        return(FALSE)
+      }
+      if(is.na(as.numeric(input$Age)))
+      {
+        showModal(modalDialog(
+          title = "Fout!",
+          "Leeftijd moet een cijfer zijn!"
+        ))
+        return(FALSE)
+      }
+      if((is.na(as.numeric(input$Age))== FALSE) && ((as.numeric(input$Age)<1) ||(as.numeric(input$Age)>150)))
+      {
+        showModal(modalDialog(
+          title = "Fout!",
+          "Geen geldige leeftijd!"
+        ))
+        return(FALSE)
+      }
+      return(TRUE)
+    }
+    
     end_message <- eventReactive(input$OK.Input,{
-      input.data$gender <- input$Gender
-      input.data$age <- input$Age
-      input.data$code <- input$Code
-      print(input.data$gender)
-      paste0("Thanks for the information.",
-             "Please click on 'Questionnaire' to start the survey!")
+      if(check.valid.input()){
+        input.data$gender <- input$Gender
+        input.data$age <- input$Age
+        input.data$code <- input$Code
+        paste0("Bedankt voor de informatie. ",
+               "Klik op 'Vragenlijst' om de enquête te starten!")
+      }
     })
     output$Message <- renderText({
       end_message()
       })
+
     })
 }
+
 
