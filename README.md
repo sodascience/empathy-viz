@@ -8,7 +8,7 @@ Application to be used in a clinical setting to understand empathy. The applicat
 ## Usage
 
 <!-- We should add here -->
-The app runs online at xxxx [link]
+The app runs online at https://utrecht-university.shinyapps.io/empathy-viz/.
 
 The app has three parts:
 
