@@ -38,10 +38,10 @@ If you would like to modify the app and run locally, please follow the following
 
 
 ### Set up survey
-- /data/introduction.csv --> Text in the introduction page, explaining the survey to the participant
-- /data/situations.csv --> ID of the questions, description and attached figure (to be displayed in the left)
-- /data/sub_situations.csv --> Each situation has two extra sub_situations
-- /data/RadioMatrixFrame.csv --> Scales associated (see image above)
+- `data/introduction.csv` - Text in the introduction page, explaining the survey to the participant
+- `data/situations.csv` - ID of the questions, description and attached figure (to be displayed in the left)
+- `data/sub_situations.csv` - Each situation has two extra sub_situations
+- `data/RadioMatrixFrame.csv` - Scales associated (see image above)
 
 
 ### Run code
