@@ -99,7 +99,7 @@ Science (SoDa)](https://odissei-data.nl/nl/soda/) team.
 
 Do you have questions, suggestions, or remarks? File an issue in the
 issue tracker or feel free to contact [Javier Garcia-Bernardo](https://github.com/jgarciab)
-(\[@jgarciab\](<https://twitter.com/javiergb_com>)) or [Parisa 
+(:bird: [@jgarciab](<https://twitter.com/javiergb_com>)) or [Parisa 
 Zahedi](https://github.com/parisa-zahedi)
 
 <img src="man/resources/word_colour-l.png" alt="SoDa logo" width="250px"/> 
