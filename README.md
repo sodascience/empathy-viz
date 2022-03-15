@@ -20,7 +20,7 @@ Basic description of the survey, and possibility to upload results from a partic
 ### Questionnaire
 Five question, each with three subquestions. 
 
-<img src="man/figures/screenshot_question.png" alt="Question and possible options" width="250px"/>
+![Questions](man/resources/screenshot_question.png)
 
 At the end of the questionnaire, the results of the survey can be downloaded.
 
