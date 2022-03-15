@@ -48,31 +48,9 @@ If you would like to modify the app and run locally, please follow the following
 - Install dependencies //renv information here//
 - Run shiny app
 
-
-
-<!-- ABOUT THE PROJECT -->
-## About the Project
-
-**Date**: October 2021
-
-**Researcher(s)**:
-
-- Minet de Wied (m.dewied@uu.nl)
-
-
-**Research Software Engineer(s)**:
-
-- Javier Garcia Bernardo (j.garciabernardo@uu.nl)
-
-- Shiva Nadi Najafabadi(s.nadinajafabadi@uu.nl)
-
-- Parisa Zahedi (p.zahedi@uu.nl)
-
 ### Built with
 
 - [shiny1.7.1](https://shiny.rstudio.com)
-
-<!-- CONTRIBUTING -->
 
 ## Contributing
 
@@ -94,10 +72,11 @@ The code in this project is released under [MIT license](LICENSE.md).
 
 ## Contact
 
-This package is developed and maintained by the [ODISSEI Social Data
+The **Dynamiek in beeld** project is a project by [Minet de Wied](https://www.uu.nl/medewerkers/mdewied).
+The technical implementation is provided by the [ODISSEI Social Data
 Science (SoDa)](https://odissei-data.nl/nl/soda/) team.
 
-Do you have questions, suggestions, or remarks? File an issue in the
+Do you have questions, suggestions, or remarks on the technical implementation? File an issue in the
 issue tracker or feel free to contact [Javier Garcia-Bernardo](https://github.com/jgarciab)
 (:bird: [@jgarciab](<https://twitter.com/javiergb_com>)) or [Parisa 
 Zahedi](https://github.com/parisa-zahedi)
