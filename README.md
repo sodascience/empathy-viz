@@ -72,7 +72,7 @@ The code in this project is released under [MIT license](LICENSE.md).
 
 ## Contact
 
-The **Dynamiek in beeld** project is a project by [Minet de Wied](https://www.uu.nl/medewerkers/mdewied).
+**Dynamiek in Beeld** is project by [Dr. Minet de Wied](https://www.uu.nl/medewerkers/mdewied).
 The technical implementation is provided by the [ODISSEI Social Data
 Science (SoDa)](https://odissei-data.nl/nl/soda/) team.
 
