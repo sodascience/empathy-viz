@@ -13,15 +13,9 @@ questionUI <- function(id) {
   actionButton(NS(id,"Click.CounterBack"), "<"),
   
   # Action button Next
-  actionButton(NS(id,"Click.Counter"), "Volgende"),
+  actionButton(NS(id,"Click.Counter"), "Volgende")
  
-  progressBar(
-    id = NS(id,"pb"),
-    value = 1,
-    total = 10,
-    title = "",
-    display_pct = TRUE
-  ),
+  
   )
 }
 
@@ -42,11 +36,11 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     user.age <- reactive({input.data$age})
     user.code <- reactive({input.data$code})
     
+    #observe({shinyjs::runjs("window.scrollTo(0, 0)")})
     df.survey_result <- reactive({df.survey$data})
     
     # Create a dataframe to hold survey results
     df.survey$data <- make.df.survey_result(nrow(vignettes)-1,
-                                             nrow(relationships)+1,
                                              nrow(radio.matrix.frame))
     
     
@@ -57,12 +51,8 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         new.count <- ifelse(counter()<=nrow(vignettes)+1,counter() + 1, counter())   
         counter(new.count)
         
-        updateProgressBar(
-          session = session,
-          id = "pb",
-          value = counter()+1, total = 10
-        )
-    }
+      }
+      {shinyjs::runjs("window.scrollTo(0, 0)")}
     })
     
     # Subtract counter() by 1, if Previous is clicked
@@ -70,11 +60,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
       save.survey.results()
       new.count <- ifelse(counter()>0,counter() - 1,counter())     
       counter(new.count)
-      updateProgressBar(
-        session = session,
-        id = "pb",
-        value = counter()+1, total = 10
-      )
+      {shinyjs::runjs("window.scrollTo(0, 0)")}
     })
     
     
@@ -103,12 +89,13 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
        
       }
       
+      
       # Initially show an introduction to survey
       if (counter()==0)
         return(
           list(
             verticalLayout(
-                get_introduction(intro_fp,1)
+               h5(get_introduction(intro_fp,1))
             )
           )
         )
@@ -117,7 +104,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         return(
           list(
             verticalLayout(
-              get_introduction(intro_fp,2)
+              h5(get_introduction(intro_fp,2))
             )
           )
         )
@@ -126,6 +113,14 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
       if (counter()>1 & counter()<(nrow(vignettes)+1))
         return(
           list(
+            progressBar(
+                id = NS(id,"pb"),
+                value = counter()-1,
+                total = nrow(vignettes)-1,
+                title = "",
+                display_pct = TRUE
+              ),
+            h3(textOutput(ns("vignette.title"))),
             strong(textOutput(ns("vignette.desc"))),
             radioMatrixInput(inputId = ns("rmi01"), 
                              rowIDs = radio.matrix.frame$qID,
@@ -158,13 +153,15 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         return(
           list(
 
-            fluidRow(
-              column(8, align="center",
+            fluidRow(align = "center",
+              column(12, align="center",
                      h2(end.df[1,'text'], style = "font-weight: 500; color: black;"),
+                     h2(end.df[2,'text'], style = "font-weight: 500; color: black;"),
                      h2(" "),
                      imageOutput(ns("img.hooray"))
               )
             )
+            
           )
         )
     }
@@ -189,22 +186,26 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
       
      })
     
-    # Show the situation number (V:) followed by the situation description
-    output$vignette.desc <- renderText({
+    # Show the situation title
+    output$vignette.title <- renderText({
       paste0(
-        "V", counter()-1,":",
-        vignettes[vignettes$Vnum==(counter()-1),c("Vignette_desc")]
+        vignettes[vignettes$Vnum==(counter()-1),c("Vignette_title")],":"
       )
+    })
+    
+    # Show the situation description
+    output$vignette.desc <- renderText({
+        vignettes[vignettes$Vnum==(counter()-1),c("Vignette_desc")]
     })
     
     # Show the sub-situation1 description
     output$relationship1 <- renderText({
-        relationships[1,c("Relationship_desc")]
+        relationships[(relationships$Vnum==(counter()-1)) & (relationships$Rnum==1),c("Relationship_desc")]
     })
     
     # Show the sub-situation2 description
     output$relationship2 <- renderText({
-      relationships[2,c("Relationship_desc")]
+      relationships[(relationships$Vnum==(counter()-1)) & (relationships$Rnum==2),c("Relationship_desc")]
     })
     
     # Save the results of the survey in memory.
@@ -215,21 +216,21 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
           df.survey_result()$relatie == relationship_items[1]
         
         rmi01 <- nullToNA(input$rmi01)
-        try(df.survey$data[cond1,emotion_items] <<-rmi01)
+        try(df.survey$data[cond1,respons_items] <<-rmi01)
         
         
         cond2 <- df.survey_result()$vignet == (counter()-1) &
           df.survey_result()$relatie == relationship_items[2]
         
         rmi02 <- nullToNA(input$rmi02)
-        try(df.survey$data[cond2,emotion_items] <<-rmi02)
+        try(df.survey$data[cond2,respons_items] <<-rmi02)
         
         
         cond3 <- df.survey_result()$vignet == (counter()-1) &
           df.survey_result()$relatie == relationship_items[3]
         
         rmi03 <- nullToNA(input$rmi03)
-        try(df.survey$data[cond3,emotion_items] <<- rmi03)
+        try(df.survey$data[cond3,respons_items] <<- rmi03)
         
       }
       
@@ -246,8 +247,8 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
           "Gelieve alle vragen te beantwoorden!",
           footer = modalButton("OK"),
         ))
-        
-        return (FALSE)  
+
+        return (FALSE)
       }
       else
         return (TRUE)
@@ -292,7 +293,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         
         cond1 <- df.survey_result()$vignet == (counter()-1) &
           df.survey_result()$relatie == sub.sit
-        return (df.survey_result()[cond1,emotion_items])
+        return (df.survey_result()[cond1,respons_items])
       }
       else
         return (c(0,0,0,0,0))

@@ -1,3 +1,14 @@
-Rnum,Relationship_desc
-1,"Stel dat het een meisje is die je verder niet kent. Wat voel je en doe je dan?"
-2,"Of een meisje die je niet graag mag. Wat voel je en doe je dan?"
+Vnum,Rnum,Relationship_desc
+1,1,"Stel dat het een meisje is die je verder niet kent. Wat voel je en doe je dan?"
+1,2,"Of een meisje die je niet graag mag. Wat voel je en doe je dan?"
+2,1,"Stel dat het een meisje is die je verder niet kent. Wat voel je en doe je dan?"
+2,2,"Of een meisje die je niet graag mag. Wat voel je en doe je dan?"
+3,1,"Stel dat het een meisje is die je verder niet kent. Wat voel je en doe je dan?"
+3,2,"Of een meisje die je niet graag mag. Wat voel je en doe je dan?"
+4,1,"Stel dat het een jongen is die je verder niet kent. Wat voel je en doe je dan?"
+4,2,"Of een jongen die je niet graag mag. Wat voel je en doe je dan?"
+5,1,"Stel dat het een jongen is die je verder niet kent. Wat voel je en doe je dan?"
+5,2,"Of een jongen die je niet graag mag. Wat voel je en doe je dan?"
+6,1,"Stel dat het een jongen is die je verder niet kent. Wat voel je en doe je dan?"
+6,2,"Of een jongen die je niet graag mag. Wat voel je en doe je dan?"
+
