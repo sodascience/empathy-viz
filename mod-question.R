@@ -46,7 +46,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     
     # Add to counter() by 1, if Next is clicked
     observeEvent(input$Click.Counter, {
-      if (check.complete.survey()){
+      if (counter()<2 ||check.complete.survey()){
         save.survey.results()
         new.count <- ifelse(counter()<=nrow(vignettes)+1,counter() + 1, counter())   
         counter(new.count)
