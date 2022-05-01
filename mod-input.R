@@ -4,9 +4,9 @@ inputUI <- function(id) {
     h4("Achtergrond Informatie"),
     selectInput(NS(id,"Gender"), "Gender:",
                 c("kies je geslacht:" = "select",
-                  "Mannelijk" = "male",
-                  "Vrouwelijk" = "female",
-                  "Ander" = "other")),
+                  "Man" = "male",
+                  "Vrouw" = "female",
+                  "Anders" = "other")),
     textInput(NS(id,"Age"), placeholder = "Leeftijd", label = "Leeftijd:", width = "30%"),
     textInput(NS(id,"Code"), placeholder = "Code", label = "Code:", width = "30%"),
     actionButton(NS(id,"OK.Input"), "OK"),
@@ -14,7 +14,7 @@ inputUI <- function(id) {
   )
 }
 
-inputServer <- function(id, input.data) {
+inputServer <- function(id, input.data, parrent.session, tabset.id, tab.target) {
   moduleServer(id, function(input, output, session) {
     
     
@@ -52,13 +52,21 @@ inputServer <- function(id, input.data) {
         input.data$gender <- input$Gender
         input.data$age <- input$Age
         input.data$code <- input$Code
-        paste0("Bedankt voor de informatie. ",
-               "Klik op 'Vragenlijst' om de enquête te starten!")
+        # paste0("Bedankt voor de informatie. ",
+               # "Klik op 'Vragenlijst' om de enquête te starten!")
       }
     })
-    output$Message <- renderText({
-      end_message()
-      })
+    
+    user_input <- observeEvent(input$OK.Input,{ #
+      req(end_message())
+      updateTabsetPanel(parrent.session, tabset.id,
+                        selected = tab.target)
+      
+      ## use ignoreNULL to fire the event at startup
+    }, ignoreNULL = FALSE) 
+    # output$Message <- renderText({
+    #   end_message()
+    #   })
 
     })
 }
