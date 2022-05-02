@@ -16,7 +16,8 @@ The app has three parts:
 Background information of the participant including gender, age and survey code are provided in this section.
 
 
-![](man/resources/screenshot_input.png)
+<img src="man/resources/Screenshot_input.png" alt="Participant background information"/>
+
 
 
 ### Questionnaire
