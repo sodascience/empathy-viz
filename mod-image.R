@@ -23,8 +23,7 @@ imageServer <- function(id, vignettes_fp, counter) {
     output$img <- renderImage({
       list(src = get_image_name(),
            contentType = "image/jpg",
-           width = "85%",
-           height = "60%")},
+           width = "95%")},
       deleteFile = FALSE) 
     })
 }

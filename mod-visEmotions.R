@@ -3,7 +3,7 @@ source("visualization.R")
 
 visEmotionUI <- function(id) {
   fluidPage(
-    titlePanel("Dynamiek in Emoties"),  
+    titlePanel(h6( "Dynamiek in Emoties")),  
     sidebarLayout(
       sidebarPanel(
         h6(textOutput(NS(id,"guideline"))),
@@ -33,7 +33,7 @@ visEmotionServer <- function(id, guideline_fp, df.vis) {
       tagList(
         checkboxGroupInput(NS(id,"respons"),"Respons",
                            choices = as.character(unique(df.dataset()$respons)),
-                           selected = as.character(unique(df.dataset()$respons)))
+                           selected =c("empathie"))
       )
     })
     
@@ -60,15 +60,17 @@ visEmotionServer <- function(id, guideline_fp, df.vis) {
     })
     
     plt_emotion <- reactive({
-      ggplot(cr_emotion(), aes(x=vign_cat, y=intensity_mean, fill=respons)) +
-        geom_bar(position="dodge", stat="identity", alpha=0.5)+
+      ggplot(cr_emotion(), aes(x=vign_cat, y=intensity_mean)) +
+        geom_point(aes(group = respons, color = respons), size = 3, position=position_dodge(width = 0.9))+
+        geom_errorbar(aes(group = respons, ymin = 0, ymax = intensity_mean, color = respons), 
+                      width = 0, position=position_dodge(width = 0.9), size = 1.5, stat="identity", alpha=0.5)+
         scale_y_continuous(limits = c(1, 5),
                            oob = scales::squish)+
         
         ylab("Intensiteit-gemiddelde") +
-        ggtitle("Gemiddelde scores over vignetten en relaties")+
+        ggtitle("Gemiddelde scores per emotie")+
         My_Theme +
-        scale_fill_manual(values = respons.colorCode)
+        scale_color_manual(values = respons.colorCode)
     })
     
     output$Download.pdf <- downloadHandler(

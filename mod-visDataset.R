@@ -1,11 +1,15 @@
 source("questions.R")
+library("readxl")
+library("tidyr")
+library("dplyr")
+
 visDatasetUI <- function(id) {
   tagList(
     h4("Selecteer een dataset om te visualiseren"),
     radioButtons(NS(id,"dataset_radio"), "Datasets:",
                  c("Huidig onderzoek" ="current",
                    "Een bestand uploaden" = "file" )),
-    fileInput(NS(id,"file1"), "Kies een CSV-bestand:", accept = ".csv"),
+    fileInput(NS(id,"file1"), "Kies een CSV or XLSX-bestand:", accept = c(".csv",".xlsx")),
     
     # Action button Visualize
     actionButton(NS(id,"OK.button"), "OK")
@@ -31,12 +35,23 @@ visDatasetServer <- function(id, df.survey, df.vis, parrent.session, tabset.id, 
       file <- input$file1
       ext <- tools::file_ext(file$datapath)
       req(file)
-      validate(need(ext == "csv", "Upload a.u.b. een csv-bestand"))
-      df <- read.csv(file$datapath)
-      df$relatie <- factor(df$relatie, levels = c("vriend(in)","vreemde","vijand") )
-      df$respons <- factor(df$respons, levels = c("empathie","counter","distress","sympathie","gedrag"))
-      df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","pijn","verdriet") )
-      df$vignet <- factor(df$vignet)
+      if (ext == "csv") {
+        df <- read.csv(file$datapath)
+        df$relatie <- factor(df$relatie, levels = c("vriend(in)","vreemde","vijand") )
+        df$respons <- factor(df$respons, levels = c("empathie","counter","distress","sympathie","gedrag"))
+        df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","pijn","verdriet") )
+        df$vignet <- factor(df$vignet)
+      } else if (ext == "xlsx") {
+        df <- readxl::read_excel(file$datapath)
+        df$relatie <- factor(df$relatie, levels = c("vriend(in)","vreemde","vijand") )
+        df$respons <- factor(df$respons, levels = c("empathie","counter","distress","sympathie","gedrag"))
+        df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","pijn","verdriet") )
+        df$vignet <- factor(df$vignet)
+      } else {
+        need(FALSE, "Upload a.u.b. een csv or xlsx-bestand")
+      }
+      #validate(need(ext == "csv", "Upload a.u.b. een csv-bestand"))
+      
       return (df)
     }, ignoreNULL = FALSE)
  

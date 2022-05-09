@@ -55,13 +55,9 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            "Visualisatie",
                            tabsetPanel(
                              id = "vistab",
-                             tabPanel(title = "DataSet",
+                             tabPanel(title = "Selecteer Dataset",
                                       value = "tdataset",
                                       visDatasetUI("visDataset1")
-                             ),
-                             tabPanel(title = "Dynamiek in emoties",
-                                      value = "temo",
-                                      visEmotionUI("visEmotion1")
                              ),
                              navbarMenu("Dynamiek in relaties",
                                         tabPanel(title = "Blijdschap", 
@@ -75,8 +71,11 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                                  visRelationshipUI("visRelationship1"))
                                       
                              ),
-                             
-                             tabPanel("Relaties X Emoties",
+                             tabPanel(title = "Dynamiek in emoties",
+                                      value = "temo",
+                                      visEmotionUI("visEmotion1")
+                             ),                             
+                             tabPanel("Relaties * Emoties",
                                       visRelEmoUI("visRelEmo1"))
                            ))
                           # End Visualization-tab 
@@ -93,7 +92,7 @@ server <- function(input, output, session) {
                  "data/ending.csv",counter,input.data,df.survey)
   imageServer("img1","data/vignettes.csv",counter)
   inputServer("inp1",input.data, session, "main.navbar","tvrag")
-  visDatasetServer("visDataset1",df.survey, df.vis, session,"vistab","temo")
+  visDatasetServer("visDataset1",df.survey, df.vis, session,"vistab","tblij")
   visRelationshipServer("visRelationship1",df.vis,"data/vignettes.csv","data/guideline_vis.csv",'pijn')
   visRelationshipServer("visRelationship2",df.vis,"data/vignettes.csv","data/guideline_vis.csv",'blijdschap')
   visRelationshipServer("visRelationship3",df.vis,"data/vignettes.csv","data/guideline_vis.csv",'verdriet')

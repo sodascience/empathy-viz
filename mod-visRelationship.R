@@ -4,7 +4,7 @@ source("visualization.R")
 
 visRelationshipUI <- function(id) {
   fluidPage(
-    titlePanel("Dynamiek in Relaties "),  
+    titlePanel(h6("Dynamiek in Relaties ")),  
     sidebarLayout(
       sidebarPanel(
         h6(textOutput(NS(id,"guideline"))),
@@ -79,6 +79,7 @@ visRelationshipServer <- function(id, df.vis, vignette_fp, guideline_fp, vign.ty
     plt_relatie <- reactive({
       ggplot(cr(), aes(x=relatie, y=value.num, linetype=vignet, colour=respons)) + 
         geom_line(aes(group=interaction(vignet, respons)), size=2, alpha=0.5)+
+        geom_point(aes(group=interaction(vignet, respons)), size=3, alpha=0.5)+
         #geom_point(aes(shape=emotion)) +
         ggtitle(paste0("Dynamiek in relaties: ",vign.type)) +
         ylim(1,5)+ylab("Intensiteit") +

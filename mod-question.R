@@ -178,7 +178,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
             # Action button Download pdf
             downloadButton(ns("Click.Download.pdf"), "PDF downloaden"),
             
-            h4("Geaggregeerde resultaten bekijken"),
+            h4("Geaggregeerde resultaten. Klik op _Visualisatie_ om de resultaten te bekijken."),
             tableOutput(ns("surveyresults"))
             
           )
@@ -271,7 +271,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         paste("data", user.gender(),user.age(),user.code(), ".xlsx", sep="-")
       },
       content = function(file) {
-        numeric.survey.result <- to_numeric_df(df.survey_result())
+        numeric.survey.result <- refactor_df(df.survey_result())
         write_xlsx(numeric.survey.result, file)
       }
     )

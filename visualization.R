@@ -5,7 +5,8 @@ My_Theme = theme(
   axis.title.y = element_text(size = 12, margin = margin(t=0, r=20, b=0, l=0)),
   axis.text.y = element_text(size = 12, face="bold"),
   legend.title = element_text(size = 12, face="bold"),
-  legend.text = element_text(size = 14))
+  legend.text = element_text(size = 14),
+  panel.grid.major.x = element_blank())
 
 theme_set(theme_minimal())
 

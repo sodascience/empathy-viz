@@ -4,7 +4,7 @@ source("visualization.R")
 
 visRelEmoUI <- function(id) {
   fluidPage(
-    titlePanel("Dynamiek in Relaties * emotie "),  
+    titlePanel(h6("Dynamiek in Relaties * Emoties")),  
     sidebarLayout(
       sidebarPanel(
         h6(textOutput(NS(id,"guideline"))),
@@ -65,6 +65,7 @@ visRelEmoServer <- function(id,guideline_fp,df.vis) {
     plt_em.relatie <- reactive({
       p <- ggplot(cr(), aes(x=relatie, y=intensity_mean, colour=respons)) + 
         geom_line(aes(group=interaction(respons)),size=1, alpha=0.5)+
+        geom_point(aes(group=interaction(respons)), size=3, alpha=0.5)+
         scale_y_continuous(limits = c(1, 5), 
                            oob = scales::squish)+
         ggtitle("Gemiddelde scores over de twee vignetten")+
@@ -72,10 +73,12 @@ visRelEmoServer <- function(id,guideline_fp,df.vis) {
         scale_x_discrete(guide = guide_axis(angle = 45))+
         
         My_Theme+
-        scale_color_manual(values = respons.colorCode)
+        scale_color_manual(values = respons.colorCode) 
       
       p + facet_grid(~vign_cat, scales = "free", space='free')+ 
-        theme(strip.text.x = element_text(size = 18))
+        theme(strip.text.x = element_text(size = 18),
+              legend.position="top",
+              legend.box="horizontal") 
       
     })
     
