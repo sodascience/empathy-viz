@@ -12,14 +12,16 @@ The app runs online at https://utrecht-university.shinyapps.io/empathy-viz/.
 
 The app has three parts:
 
-### Introduction
-Basic description of the survey, and possibility to upload results from a participant.
+### Input
+Background information of the participant including gender, age and survey code are provided in this section.
 
-(image goes here)
+
+<img src="man/resources/Screenshot_input.png" alt="Participant background information"/>
+
+
 
 ### Questionnaire
-Five question, each with three subquestions. 
-
+Questionnaire starts with a basic description of the survey, followed by six question, each with three subquestions. 
 ![Questions](man/resources/screenshot_question.png)
 
 At the end of the questionnaire, the results of the survey can be downloaded.
@@ -27,10 +29,22 @@ At the end of the questionnaire, the results of the survey can be downloaded.
 
 ### Visualization
 
-(image goes here)
+Start with selecting the datasource. There is possibility to visualize the current survey or upload existing results saved in .csv format.
+
+Visualization is available in three styles:
 
 
 
+
+<img src="man/resources/Screenshot_emot.png" alt="Dynamics in Emotions"/>
+
+
+
+<img src="man/resources/Screenshot_rel.png" alt="Dynamics in relationships" />
+
+
+
+<img src="man/resources/Screenshot_rel_emot.png" alt="Dynamics in relationships * emotions"/>
 
 ## Adapting the survey with new questions
 
@@ -39,9 +53,11 @@ If you would like to modify the app and run locally, please follow the following
 
 ### Set up survey
 - `data/introduction.csv` - Text in the introduction page, explaining the survey to the participant
-- `data/situations.csv` - ID of the questions, description and attached figure (to be displayed in the left)
-- `data/sub_situations.csv` - Each situation has two extra sub_situations
+- `data/vignettes.csv` - ID of the questions, title, description, and attached figure (to be displayed in the left)
+- `data/relationships.csv - Each vignette is described for two more types of relationships, i.e. stranger and foe.
 - `data/RadioMatrixFrame.csv` - Scales associated (see image above)
+- `data/ending.csv` - Text in the last page
+- `data/guideline_vis.csv` - A short explanation of how to use visualization
 
 
 ### Run code

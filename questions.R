@@ -1,6 +1,6 @@
 library(reshape)
-emotion_items <- c("empathie","sympathie","distress","gedrag","counter")
-relationship_items <- c("vriend","vreemde","vijand")
+respons_items <- c("empathie","counter","distress","sympathie","gedrag")
+relationship_items <- c("vriend(in)","vreemde","vijand")
 
 style_txt_itms <- function(txt){
   strong(p(style="text-align: justify;",
@@ -48,20 +48,20 @@ get_radioMatrixFrame <- function(rmf_fp){
   )
 }
 
-make.df.survey_result<- function(vignette.no, relationship.no,emotion.no){
-  
+make.df.survey_result<- function(vignette.no,respons.no){
+  relationship.no <- length(relationship_items)
   vignet <-  rep(seq(1,vignette.no), each = relationship.no)
   relatie <- rep(relationship_items,times=relationship.no)
   df.survey.result <- data.frame(vignet,relatie)
   
-  em.names <- emotion_items
+  em.names <- respons_items
   emval <- rep("", nrow(df.survey.result))
-  em<-as.data.frame(matrix(emval, nrow=length(emval), ncol=emotion.no))
+  em<-as.data.frame(matrix(emval, nrow=length(emval), ncol=respons.no))
   colnames(em)<- em.names
   
   df <- cbind(df.survey.result,em)
   
-  df$relatie <- factor(df$relatie, levels = c("vriend","vreemde","vijand") )
+  df$relatie <- factor(df$relatie, levels = c("vriend(in)","vreemde","vijand") )
   df$vignet <- factor(df$vignet)
   
   # add 'vign_cat', to show pain, sad and happiness
@@ -74,7 +74,8 @@ make.df.survey_result<- function(vignette.no, relationship.no,emotion.no){
   cond_sad <- (df$vignet =='3') | (df$vignet =='6')
   df[cond_sad,"vign_cat"] <-"verdriet"
   
-  df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","pijn","verdriet") )
+  df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","verdriet","pijn") )
+  print(df)
   return(df)
   
 }
@@ -87,7 +88,7 @@ nullToNA <- function(x) {
 refactor_df <- function(df){
   # wide.to.long 
   long <- melt(df, id=c("vignet","relatie","vign_cat"))
-  names(long) <- c("vignet","relatie","vign_cat","emotie","value")
+  names(long) <- c("vignet","relatie","vign_cat","respons","value")
 
   long$value<- factor(long$value, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk") )
   long$value.num <- as.numeric(long$value)
@@ -105,7 +106,7 @@ to_numeric_df <- function(df){
   
   df$counter_<- as.integer(factor(df$counter, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk") ))
   
-  cols <- c('vignet','relatie','vign_cat','empathie_', 'sympathie_', 'distress_', 'gedrag_', 'counter_')
+  cols <- c('vignet','relatie','vign_cat','empathie_','counter_', 'distress_','sympathie_',  'gedrag_' )
   return(df[,cols])
   
 }
