@@ -69,14 +69,14 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                         tabPanel(title = "Pijn",
                                                  value = "tpijn",
                                                  visRelationshipUI("visRelationship1"))
-                                      
-                             ),
+                                        
+                             ),                             
+                             tabPanel("Relaties * Emoties",
+                                      visRelEmoUI("visRelEmo1")),
                              tabPanel(title = "Dynamiek in emoties",
                                       value = "temo",
                                       visEmotionUI("visEmotion1")
-                             ),                             
-                             tabPanel("Relaties * Emoties",
-                                      visRelEmoUI("visRelEmo1"))
+                             )
                            ))
                           # End Visualization-tab 
                    
