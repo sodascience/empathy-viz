@@ -2,7 +2,7 @@ source("questions.R")
 inputUI <- function(id) {
   tagList(
     h4("Achtergrond Informatie"),
-    selectInput(NS(id,"Gender"), "Gender:",
+    selectInput(NS(id,"Gender"), "Geslacht:",
                 c("kies je geslacht:" = "select",
                   "Man" = "male",
                   "Vrouw" = "female",
@@ -36,7 +36,7 @@ inputServer <- function(id, input.data, parrent.session, tabset.id, tab.target) 
         ))
         return(FALSE)
       }
-      if((is.na(as.numeric(input$Age))== FALSE) && ((as.numeric(input$Age)<1) ||(as.numeric(input$Age)>150)))
+      if((is.na(as.numeric(input$Age))== FALSE) && ((as.numeric(input$Age)<1) ||(as.numeric(input$Age)>70)))
       {
         showModal(modalDialog(
           title = "Fout!",
