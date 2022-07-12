@@ -61,8 +61,9 @@ If you would like to modify the app and run locally, please follow the following
 
 
 ### Run code
-- Install dependencies //renv information here//
-- Run shiny app
+- Clone repository OR download repository (Code --> Download as ZIP)
+- Start RStudio and navigate to the folder
+- Click on run app
 
 ### Built with
 
