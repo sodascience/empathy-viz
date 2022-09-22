@@ -13,10 +13,10 @@ imageServer <- function(id, vignettes_fp, counter) {
     
     get_image_name <-reactive({
       print(counter())
-      if((counter()<2)||(counter()>nrow(vignettes))){
+      if((counter()<1)||(counter()>=nrow(vignettes))){
         vignettes[vignettes$Vnum==0,c("Img")] 
       }else{
-        vignettes[vignettes$Vnum==counter()-1,c("Img")]
+        vignettes[vignettes$Vnum==counter(),c("Img")]
       }
     })
     
