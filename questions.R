@@ -10,15 +10,12 @@ style_txt_itms <- function(txt){
   
 }
 
-get_introduction <- function(intro_fp, part_no){
+get_introduction <- function(intro_fp){
   # Read the survey_introduction
   df_intro <- read.csv(intro_fp)
-  if (part_no ==1)
-    cond <- df_intro$PNum ==1
-  else
-    cond <- df_intro$PNum !=1
+  
   return (
-      lapply(df_intro[cond,c('Paragraph')],style_txt_itms)
+      lapply(df_intro[,c('Paragraph')],style_txt_itms)
     )
 
 }
