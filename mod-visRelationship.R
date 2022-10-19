@@ -26,6 +26,7 @@ visRelationshipServer <- function(id, df.vis, vignette_fp, guideline_fp, vign.ty
     df.dataset <- reactive({df.vis$data})
     
     vignettes <- get_vignettes(vignette_fp)
+   
     # add two columns 'Vnum'-'Vignette_title'
     cols <- c("Vnum","Vignette_title")
     vign.no.title <- apply( vignettes[ , cols ] , 1 , paste , collapse = "-" )
@@ -46,6 +47,7 @@ visRelationshipServer <- function(id, df.vis, vignette_fp, guideline_fp, vign.ty
     ltys<-c(1,4)
     ltys <- setNames(ltys, vign.cond_value[[vign.type]])
     
+    gender_icn <- get_gender_icon(vignette_fp, vign.cond_value[[vign.type]])
     
     # Show the guideline
     output$guideline <- renderText({
@@ -53,8 +55,17 @@ visRelationshipServer <- function(id, df.vis, vignette_fp, guideline_fp, vign.ty
     })
     output$moreControls <- renderUI({
       tagList(
-        checkboxGroupInput(NS(id,"vignette"),"Vignet",choiceNames = vign.cond_name[[vign.type]], choiceValues = vign.cond_value[[vign.type]], selected =vign.cond_value[[vign.type]][1]),
-        checkboxGroupInput(NS(id,"respons"),"Respons",choices = as.character(unique(df.dataset()$respons)), selected =c("empathie") )
+        checkboxGroupInput(NS(id,"vignette"),"Vignet",
+                           choiceNames = mapply(vign.cond_name[[vign.type]], gender_icn, FUN = function(vign, icn) {
+                                          tagList(
+                                            tags$img(src=icn, width=20, height=15),
+                                            vign
+                                          )
+                                        }, SIMPLIFY = FALSE, USE.NAMES = FALSE), 
+                           choiceValues = vign.cond_value[[vign.type]], selected =vign.cond_value[[vign.type]][1]),
+        
+        checkboxGroupInput(NS(id,"respons"),"Respons",choices = as.character(unique(df.dataset()$respons)), 
+                           selected =c("empathie") )
       )
       
     })

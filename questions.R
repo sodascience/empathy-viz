@@ -1,5 +1,5 @@
 library(reshape)
-respons_items <- c("empathie","counter","distress","sympathie","gedrag")
+respons_items <- c("empathie","counter","distress","compassie","gedrag")
 relationship_items <- c("vriend(in)","vreemde","vijand")
 
 style_txt_itms <- function(txt){
@@ -95,7 +95,7 @@ refactor_df <- function(df){
 to_numeric_df <- function(df){
   df$empathie_<- as.integer(factor(df$empathie, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk")))
   
-  df$sympathie_<- as.integer(factor(df$sympathie, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk")))
+  df$compassie_<- as.integer(factor(df$compassie, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk")))
 
   df$distress_<- as.integer(factor(df$distress, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk") ))
   
@@ -103,7 +103,7 @@ to_numeric_df <- function(df){
   
   df$counter_<- as.integer(factor(df$counter, levels = c("helemaal niet","een beetje","redelijk","sterk","heel sterk") ))
   
-  cols <- c('vignet','relatie','vign_cat','empathie_','counter_', 'distress_','sympathie_',  'gedrag_' )
+  cols <- c('vignet','relatie','vign_cat','empathie_','counter_', 'distress_','compassie_',  'gedrag_' )
   return(df[,cols])
   
 }

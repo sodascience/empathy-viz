@@ -10,7 +10,7 @@ My_Theme = theme(
 
 theme_set(theme_minimal())
 
-respons.colorCode <- c("empathie"="#003BA3","counter"="#242424","distress"="#D64933","sympathie"="#05B158","gedrag"="#880043")
+respons.colorCode <- c("empathie"="#003BA3","counter"="#242424","distress"="#D64933","compassie"="#05B158","gedrag"="#880043")
 #ltys <- c('Onderuit met de fiets':1, 'Een winnend lot':1,'Gezakt voor het examen':1,'Plat op het water':3,'Succes bij de Voice Kids':3,'Pesterij op straat':3)
 
 get_guideline_vis <- function(guideline_fp, gno){
@@ -19,5 +19,13 @@ get_guideline_vis <- function(guideline_fp, gno){
 
   return (
     df_guideline[df_guideline$GNum==gno,"Text"]
+  )
+}
+
+get_gender_icon <- function(vignette_fp, vign_ids){
+  # Read the list of vignettes
+  df_vign <- read.csv(vignette_fp)
+  return (
+    df_vign[df_vign$Vnum %in% vign_ids,"Gender_icon"]
   )
 }

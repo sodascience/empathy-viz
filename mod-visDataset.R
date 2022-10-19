@@ -38,13 +38,13 @@ visDatasetServer <- function(id, df.survey, df.vis, parrent.session, tabset.id, 
       if (ext == "csv") {
         df <- read.csv(file$datapath)
         df$relatie <- factor(df$relatie, levels = c("vriend(in)","vreemde","vijand") )
-        df$respons <- factor(df$respons, levels = c("empathie","counter","distress","sympathie","gedrag"))
+        df$respons <- factor(df$respons, levels = c("empathie","counter","distress","compassie","gedrag"))
         df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","pijn","verdriet") )
         df$vignet <- factor(df$vignet)
       } else if (ext == "xlsx") {
         df <- readxl::read_excel(file$datapath)
         df$relatie <- factor(df$relatie, levels = c("vriend(in)","vreemde","vijand") )
-        df$respons <- factor(df$respons, levels = c("empathie","counter","distress","sympathie","gedrag"))
+        df$respons <- factor(df$respons, levels = c("empathie","counter","distress","compassie","gedrag"))
         df$vign_cat <- factor(df$vign_cat, levels = c("blijdschap","pijn","verdriet") )
         df$vignet <- factor(df$vignet)
       } else {
