@@ -59,11 +59,19 @@ If you would like to modify the app and run locally, please follow the following
 - `data/ending.csv` - Text in the last page
 - `data/guideline_vis.csv` - A short explanation of how to use visualization
 
-
 ### Run code
 - Clone repository OR download repository (Code --> Download as ZIP)
 - Start RStudio and navigate to the folder
 - Click on run app
+
+### Run via Docker
+This app can also be run via Docker. First, install docker, then 
+- Build the docker container: 
+  `docker build -t empathyviz .`
+- Run the docker container
+  `docker run --rm -ti --user shiny -p 3838:3838 empathyviz`
+- Navigate to https://localhost:3838
+
 
 ### Built with
 
