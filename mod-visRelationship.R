@@ -10,7 +10,8 @@ visRelationshipUI <- function(id) {
         h6(textOutput(NS(id,"guideline"))),
         uiOutput(NS(id,"moreControls")),
         # Action button Download pdf
-        downloadButton(NS(id,"Download.pdf"), "Download Grafiek")
+        downloadButton(NS(id,"Download.pdf"), "Download Grafiek"),
+        width = 2
       ),
       
       mainPanel(
