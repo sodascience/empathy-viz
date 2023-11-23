@@ -47,7 +47,7 @@ get_radioMatrixFrame <- function(rmf_fp){
 
 make.df.survey_result<- function(vignette.no,respons.no){
   relationship.no <- length(relationship_items)
-  vignet <-  rep(seq(1,vignette.no), each = relationship.no)
+  vignet <-  rep(seq(1,vignette.no/relationship.no), each = relationship.no)
   relatie <- rep(relationship_items,times=relationship.no)
   df.survey.result <- data.frame(vignet,relatie)
   

@@ -25,8 +25,6 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     
     # Read list of described situations
     vignettes <- get_vignettes(vignette_fp)
-    # Read list of described sub-situations
-    relationships <- get_relationships(relationship_fp)
     # Read radio-buttons rows and columns
     radio.matrix.frame <- get_radioMatrixFrame(rmf_fp)
     # Read text/image of the ending page
@@ -120,24 +118,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
                              rowLLabels = radio.matrix.frame[,counter()+1], 
                              choices = radio.matrix.frame$columnNames,
                              selected = upload.results(relationship_items[1])
-            ),
-            
-            strong(textOutput(ns("relationship1"))),
-            radioMatrixInput(inputId = ns("rmi02"), 
-                             rowIDs = radio.matrix.frame$qID+5,
-                             rowLLabels = radio.matrix.frame[,counter()+1], 
-                             choices = radio.matrix.frame$columnNames,
-                             selected = upload.results(relationship_items[2])
-            ),
-            strong(textOutput(ns("relationship2"))),
-            radioMatrixInput(inputId = ns("rmi03"), 
-                             rowIDs = radio.matrix.frame$qID+10,
-                             rowLLabels = radio.matrix.frame[,counter()+1], 
-                             choices = radio.matrix.frame$columnNames,
-                             selected = upload.results(relationship_items[3])
             )
-            
-            
           )
         )
       
@@ -191,39 +172,20 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
         vignettes[vignettes$Vnum==(counter()),c("Vignette_desc")] 
     })
     
-    # Show the sub-situation1 description
-    output$relationship1 <- renderText({
-        relationships[(relationships$Vnum==(counter())) & (relationships$Rnum==1),c("Relationship_desc")] 
-    })
-    
-    # Show the sub-situation2 description
-    output$relationship2 <- renderText({
-      relationships[(relationships$Vnum==(counter())) & (relationships$Rnum==2),c("Relationship_desc")] 
-    })
-    
     # Save the results of the survey in memory.
     save.survey.results <- function(){
       # After each click, save the results of the radio buttons in df.
+      
       if ((counter()>0)&(counter()<nrow(vignettes))){
-        cond1 <- df.survey_result()$vignet == (counter()) & 
-          df.survey_result()$relatie == relationship_items[1]
+        vignet_no = ceiling(counter()/length(relationship_items))
+        #relatie_no = counter()%%length(relationship_items)
+        relatie_no = counter() - (length(relationship_items) * (vignet_no-1))
+        
+        cond1 <- df.survey_result()$vignet == vignet_no & 
+          df.survey_result()$relatie == relationship_items[relatie_no]
         
         rmi01 <- nullToNA(input$rmi01)
         try(df.survey$data[cond1,respons_items] <<-rmi01) 
-        
-        
-        cond2 <- df.survey_result()$vignet == (counter()) & 
-          df.survey_result()$relatie == relationship_items[2]
-        
-        rmi02 <- nullToNA(input$rmi02)
-        try(df.survey$data[cond2,respons_items] <<-rmi02)
-        
-        
-        cond3 <- df.survey_result()$vignet == (counter()) & 
-          df.survey_result()$relatie == relationship_items[3]
-        
-        rmi03 <- nullToNA(input$rmi03)
-        try(df.survey$data[cond3,respons_items] <<- rmi03)
         
       }
       
@@ -232,9 +194,7 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     # check all questions are answered.
     check.complete.survey<- function(){
       hasNull_1 <- any(sapply(input$rmi01, is.null))
-      hasNull_2 <- any(sapply(input$rmi02, is.null))
-      hasNull_3 <- any(sapply(input$rmi03, is.null))
-      if(hasNull_1 || hasNull_2 || hasNull_3){
+      if(hasNull_1){
         showModal(modalDialog(
           title = "Error!",
           "Gelieve alle vragen te beantwoorden!",
@@ -284,8 +244,11 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
       # After each click, load the existing answers in to the radio buttons.
       if ((counter()>0)&(counter()<nrow(vignettes))){ 
         
-        cond1 <- df.survey_result()$vignet == (counter()) & 
-          df.survey_result()$relatie == sub.sit
+        vignet_no = ceiling(counter()/length(relationship_items))
+        relatie_no = counter() - (length(relationship_items) * (vignet_no-1))
+        
+        cond1 <- df.survey_result()$vignet == (vignet_no) & 
+          df.survey_result()$relatie == relationship_items[relatie_no]
         return (df.survey_result()[cond1,respons_items])
       }
       else
