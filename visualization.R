@@ -22,10 +22,8 @@ get_guideline_vis <- function(guideline_fp, gno){
   )
 }
 
-get_gender_icon <- function(vignette_fp, vign_ids){
-  # Read the list of vignettes
-  df_vign <- read.csv(vignette_fp)
+get_gender_icon <- function(vignette, vign_ids){
   return (
-    df_vign[df_vign$Vnum %in% vign_ids,"Gender_icon"]
+    vignette[vignette$Vnum %in% vign_ids,"Gender_icon"]
   )
 }

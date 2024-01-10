@@ -11,7 +11,7 @@ visRelationshipUI <- function(id) {
         uiOutput(NS(id,"moreControls")),
         # Action button Download pdf
         downloadButton(NS(id,"Download.pdf"), "Download Grafiek"),
-        width = 2
+        width = 3
       ),
       
       mainPanel(
@@ -27,15 +27,16 @@ visRelationshipServer <- function(id, df.vis, vignette_fp, guideline_fp, vign.ty
     df.dataset <- reactive({df.vis$data})
     
     vignettes <- get_vignettes(vignette_fp)
-   
+    vignettes <- filter_vignettes(vignettes)
+    
     # add two columns 'Vnum'-'Vignette_title'
     cols <- c("Vnum","Vignette_title")
     vign.no.title <- apply( vignettes[ , cols ] , 1 , paste , collapse = "-" )
     
     vign.cond_name = hash()
-    vign.cond_name[['pijn']] <- list(vign.no.title[2],vign.no.title[5]) #vignettes[vignettes$Vnum %in% c('1','4'),"Vignette_title"]
-    vign.cond_name[['blijdschap']] <- list(vign.no.title[3],vign.no.title[6]) 
-    vign.cond_name[['verdriet']] <- list(vign.no.title[4],vign.no.title[7]) 
+    vign.cond_name[['pijn']] <- list(vign.no.title[1],vign.no.title[4])
+    vign.cond_name[['blijdschap']] <- list(vign.no.title[2],vign.no.title[5]) 
+    vign.cond_name[['verdriet']] <- list(vign.no.title[3],vign.no.title[6])
     
     
     vign.cond_value = hash()
@@ -48,7 +49,8 @@ visRelationshipServer <- function(id, df.vis, vignette_fp, guideline_fp, vign.ty
     ltys<-c(1,4)
     ltys <- setNames(ltys, vign.cond_value[[vign.type]])
     
-    gender_icn <- get_gender_icon(vignette_fp, vign.cond_value[[vign.type]])
+    gender_icn <- get_gender_icon(vignettes, vign.cond_value[[vign.type]])
+    
     
     # Show the guideline
     output$guideline <- renderText({

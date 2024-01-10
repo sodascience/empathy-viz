@@ -29,6 +29,22 @@ get_vignettes <- function(stu_fp){
   
 }
 
+filter_vignettes <- function(df_vignettes){
+  
+  vignette_numbers_all <- c(1, 4, 7, 10, 13, 16)
+  vignette_numbers_main <- 1:6
+  # Use logical indexing to filter rows
+  selected_rows <- df_vignettes[df_vignettes$Vnum %in% vignette_numbers_all, ]
+  
+  selected_rows$Vnum <- vignette_numbers_main[match(selected_rows$Vnum, vignette_numbers_all)]
+  
+  # View the selected rows
+  print(selected_rows)
+  return(
+    selected_rows
+  )
+  
+}
 get_relationships <- function(sub_stu_fp){
   # Read the list of vignettes
   df_sub_stu <- read.csv(sub_stu_fp)
