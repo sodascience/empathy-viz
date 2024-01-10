@@ -11,7 +11,7 @@ visRelEmoUI <- function(id) {
         uiOutput(NS(id,"moreControls")),
         # Action button Download pdf
         downloadButton(NS(id,"Download.pdf"), "Download Grafiek"),
-        width = 2
+        width = 3
       ),
       
       mainPanel(

@@ -11,7 +11,7 @@ visEmotionUI <- function(id) {
         
         # Action button Download pdf
         downloadButton(NS(id,"Download.pdf"), "Download Grafiek"),
-        width = 2
+        width = 3
       ),
       mainPanel(
         plotOutput(NS(id,"chart_emotion")),
