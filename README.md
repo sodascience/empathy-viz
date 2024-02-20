@@ -1,5 +1,5 @@
 # Dynamiek in beeld 
-
+[![DOI](https://zenodo.org/badge/419750917.svg)](https://zenodo.org/doi/10.5281/zenodo.10684089)
 <!-- Include Github badges here (optional) -->
 <!-- e.g. Github Actions workflow status -->
 
