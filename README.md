@@ -1,9 +1,9 @@
-# Dynamiek in beeld 
+# Dynamiek in beeld
 [![DOI](https://zenodo.org/badge/419750917.svg)](https://zenodo.org/doi/10.5281/zenodo.10684089)
 <!-- Include Github badges here (optional) -->
 <!-- e.g. Github Actions workflow status -->
 
-Application to be used in a clinical setting to understand empathy. The application allows clinician to conduct a survey and immediately visualize the results. No data is stored in the RShiny server. 
+Application to be used in a clinical setting to understand empathy. The application allows clinician to conduct a survey and immediately visualize the results. No data is stored in the RShiny server.
 
 ## Usage
 
@@ -21,7 +21,7 @@ Background information of the participant including gender, age and survey code 
 
 
 ### Questionnaire
-Questionnaire starts with a basic description of the survey, followed by six question, each with three subquestions. 
+Questionnaire starts with a basic description of the survey, followed by six question, each with three subquestions.
 ![Questions](man/resources/screenshot_question.png)
 
 At the end of the questionnaire, the results of the survey can be downloaded.
@@ -89,15 +89,11 @@ The code in this project is released under [MIT license](LICENSE.md).
 
 ## Contact
 
-**Dynamiek in Beeld** is project by [Dr. Minet de Wied](https://www.uu.nl/medewerkers/mdewied).
+**Dynamiek in Beeld** is project by [Dr. Minet de Wied](https://www.uu.nl/medewerkers/mdewied) (m.dewied@uu.nl).
 The technical implementation is provided by the [ODISSEI Social Data
-Science (SoDa)](https://odissei-data.nl/nl/soda/) team.
+Science (SoDa)](https://odissei-data.nl/nl/soda/) team. The project welcomes feedback,
+(scientific) collaboration, and (technical) integration.
 
-Do you have questions, suggestions, or remarks on the technical implementation? File an issue in the
-issue tracker or feel free to contact [Javier Garcia-Bernardo](https://github.com/jgarciab)
-(:bird: [@jgarciab](<https://twitter.com/javiergb_com>)) or [Parisa 
-Zahedi](https://github.com/parisa-zahedi)
-
-<img src="man/resources/word_colour-l.png" alt="SoDa logo" width="250px"/> 
+<img src="man/resources/word_colour-l.png" alt="SoDa logo" width="250px"/>
 
 Project Link: [https://github.com/sodascience/empathy-viz](https://github.com/sodascience/empathy-viz)
