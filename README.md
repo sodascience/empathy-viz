@@ -83,7 +83,7 @@ file for more information on issues and pull requests.
 <!-- Do not forget to also include the license in a separate file(LICENSE[.txt/.md]) and link it properly. -->
 ### License
 
-The code in this project is released under [MIT license](LICENSE.md).
+The code in this project is released under [GNU Affero General Public License](LICENSE).
 
 <!-- CONTACT -->
 
