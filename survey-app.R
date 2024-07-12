@@ -1,4 +1,5 @@
 library(shiny)
+source("mod-disclaimer.R")
 source("mod-question.R")
 source("mod-image.R")
 source("mod-input.R")
@@ -13,10 +14,25 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                            # Application title
                            "Empathie in Beeld",
                             shinyjs::useShinyjs(),
-                           
+                 
+                           # Start Disclaimer-tab
+                           tabPanel(
+                             "Disclaimer",
+                             
+                             # Disclaimer-tab body
+                             wellPanel(
+                               #style= "min-width: 300px;max-width: 400px;overflow:auto",
+                               #verticalLayout(
+                                 disclaimerUI("dsc1")
+                               #)
+                             )
+                           ),
+                           # End Disclaimer-tab          
+                 
                            # Start Input-tab
                            tabPanel(
-                             "Input",
+                             title = "Input",
+                             value = "input_tab",
                              
                              # Input-tab body
                              wellPanel(
@@ -86,12 +102,13 @@ server <- function(input, output, session) {
   input.data <- reactiveValues(gender = NULL, age = NULL, code = NULL)
   df.survey <- reactiveValues(data = NULL)
   df.vis <- reactiveValues(data = NULL)
-  
+  disclaimer_file_path = "data/disclaimer.csv"
   questionServer("surv1", "data/introduction.csv","data/vignettes.csv",
                  "data/relationships.csv", "data/RadioMatrixFrame.csv",
                  "data/ending.csv",counter,input.data,df.survey)
   imageServer("img1","data/vignettes.csv",counter)
   inputServer("inp1",input.data, session, "main.navbar","tvrag")
+  disclaimerServer("dsc1",session , "main.navbar","input_tab", disclaimer_file_path)
   visDatasetServer("visDataset1",df.survey, df.vis, session,"vistab","tblij")
   visRelationshipServer("visRelationship1",df.vis,"data/vignettes.csv","data/guideline_vis.csv",'pijn')
   visRelationshipServer("visRelationship2",df.vis,"data/vignettes.csv","data/guideline_vis.csv",'blijdschap')

@@ -61,6 +61,11 @@ get_radioMatrixFrame <- function(rmf_fp){
   )
 }
 
+get_disclaimer <- function(disclaimer_fp) {
+  config <- read.csv(disclaimer_fp)
+  as.list(setNames(config$value, config$key))
+}
+
 make.df.survey_result<- function(vignette.no,respons.no){
   relationship.no <- length(relationship_items)
   vignet <-  rep(seq(1,vignette.no/relationship.no), each = relationship.no)

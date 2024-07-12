@@ -1,0 +1,7 @@
+key,value
+logo_left_path,"www/logo_uu.png"
+logo_right_path,"man/resources/word_colour-l.png"
+title,"E-plotter: Utrechts instrument voor gepersonaliseerde diagnostiek en behandeling van empathieproblemen bij jongeren."
+participant_names,"Dr. Minet de Wied, afdeling Jeugd & Gezin, Universiteit Utrecht <br> Parisa Zahedi, Social Data Science Team (SoDa), Universiteit Utrecht <br> Dr. Javier Garcia Bernardo, Social Data Science Team (SoDa), Universiteit Utrecht <br> Shiva Nadi Najafabadi, Social Data Science Team (SoDa), Universiteit Utrecht"
+github_logo_path,"www/logo_github.png"
+additional_text,"Tijdens het gebruik van de e-plotter worden de gegevens doorgestuurd naar de beveiligde server van de UU en tijdelijk opgeslagen. Zodra de browser wordt gesloten wordt de connectie verbroken en gegevens gewist. Gegevens kunnen op eigen apparaten (laptop/computer) worden opgeslagen voor direct gebruik of op een later tijdstip." 
