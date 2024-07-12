@@ -112,7 +112,8 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
                 display_pct = TRUE
               ),
             h3(textOutput(ns("vignette.title"))),
-            strong(textOutput(ns("vignette.desc"))),
+            # strong(textOutput(ns("vignette.desc"))),
+            htmlOutput(ns("vignette.desc")),
             radioMatrixInput(inputId = ns("rmi01"), 
                              rowIDs = radio.matrix.frame$qID,
                              rowLLabels = radio.matrix.frame[,counter()+1], 
@@ -168,8 +169,21 @@ questionServer <- function(id, intro_fp, vignette_fp, relationship_fp,
     })
     
     # Show the situation description
-    output$vignette.desc <- renderText({
-        vignettes[vignettes$Vnum==(counter()),c("Vignette_desc")] 
+    # output$vignette.desc <- renderText({
+    #     vignettes[vignettes$Vnum==(counter()),c("Vignette_desc")] 
+    # })
+    
+    output$vignette.desc <- renderUI({
+      vignette_desc_part1 <- vignettes[vignettes$Vnum == counter(), "Vignette_desc_part1"]
+      vignette_desc_part2 <- vignettes[vignettes$Vnum == counter(), "Vignette_desc_part2"]
+      vignette_desc_part3 <- vignettes[vignettes$Vnum == counter(), "Vignette_desc_part3"]
+      
+      
+      HTML(paste0(
+        vignette_desc_part1, 
+        '<br> <span style="color: darkgray;">', vignette_desc_part2, '</span>',
+        '<br>',vignette_desc_part3
+      ))
     })
     
     # Save the results of the survey in memory.
