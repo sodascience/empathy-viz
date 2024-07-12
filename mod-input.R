@@ -1,3 +1,20 @@
+# This file is part of Empathy-viz.
+
+# Copyright (C) 2024  Minet de Wied & SodaScience
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 source("questions.R")
 inputUI <- function(id) {
   tagList(
@@ -16,8 +33,8 @@ inputUI <- function(id) {
 
 inputServer <- function(id, input.data, parrent.session, tabset.id, tab.target) {
   moduleServer(id, function(input, output, session) {
-    
-    
+
+
     check.valid.input <- function(){
       if(nchar(input$Age)>3)
       {
@@ -46,7 +63,7 @@ inputServer <- function(id, input.data, parrent.session, tabset.id, tab.target) 
       }
       return(TRUE)
     }
-    
+
     end_message <- eventReactive(input$OK.Input,{
       if(check.valid.input()){
         input.data$gender <- input$Gender
@@ -56,19 +73,17 @@ inputServer <- function(id, input.data, parrent.session, tabset.id, tab.target) 
                # "Klik op 'Vragenlijst' om de enquête te starten!")
       }
     })
-    
+
     user_input <- observeEvent(input$OK.Input,{ #
       req(end_message())
       updateTabsetPanel(parrent.session, tabset.id,
                         selected = tab.target)
-      
+
       ## use ignoreNULL to fire the event at startup
-    }, ignoreNULL = FALSE) 
+    }, ignoreNULL = FALSE)
     # output$Message <- renderText({
     #   end_message()
     #   })
 
     })
 }
-
-

@@ -1,3 +1,20 @@
+# This file is part of Empathy-viz.
+
+# Copyright (C) 2024  Minet de Wied & SodaScience
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 library(shiny)
 source("mod-disclaimer.R")
 source("mod-question.R")
@@ -43,29 +60,29 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                               )
                              ),
                             # End Input-tab
-                           
-                           
+
+
                            # Start Questionnaire-tab
                            tabPanel(
                              title = "Vragenlijst",
                              value = "tvrag",
-                             
+
                              # Progress bar
                              sidebarLayout(
                                sidebarPanel(
                                  imageUI("img1"),
                                  width = 3
-                                 
+
                                ),
-                               
+
                                mainPanel(
                                  questionUI("surv1") ,
                                  width = 9
                                )
                              )
                            ),
-                          # End Questionnaire-tab 
-                           
+                          # End Questionnaire-tab
+
                            # Start Visualization-tab
                          tabPanel(
                            "Visualisatie",
@@ -76,7 +93,7 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                       visDatasetUI("visDataset1")
                              ),
                              navbarMenu("Dynamiek in relaties",
-                                        tabPanel(title = "Blijdschap", 
+                                        tabPanel(title = "Blijdschap",
                                                  value = "tblij",
                                                  visRelationshipUI("visRelationship2")),
                                         tabPanel(title = "Verdriet",
@@ -85,8 +102,8 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                         tabPanel(title = "Pijn",
                                                  value = "tpijn",
                                                  visRelationshipUI("visRelationship1"))
-                                        
-                             ),                             
+
+                             ),
                              tabPanel("Relaties * Emoties",
                                       visRelEmoUI("visRelEmo1")),
                              tabPanel(title = "Dynamiek in emoties",
@@ -94,8 +111,8 @@ ui <- navbarPage(theme = bslib::bs_theme(bootswatch = "flatly"),
                                       visEmotionUI("visEmotion1")
                              )
                            ))
-                          # End Visualization-tab 
-                   
+                          # End Visualization-tab
+
 )
 server <- function(input, output, session) {
   counter <- reactiveVal(0)
@@ -103,6 +120,7 @@ server <- function(input, output, session) {
   df.survey <- reactiveValues(data = NULL)
   df.vis <- reactiveValues(data = NULL)
   disclaimer_file_path = "data/disclaimer.csv"
+
   questionServer("surv1", "data/introduction.csv","data/vignettes.csv",
                  "data/relationships.csv", "data/RadioMatrixFrame.csv",
                  "data/ending.csv",counter,input.data,df.survey)
