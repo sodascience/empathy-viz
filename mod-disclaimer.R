@@ -1,3 +1,20 @@
+# This file is part of Empathy-viz.
+
+# Copyright (C) 2024  Minet de Wied & SodaScience
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 source("questions.R")
 library(shiny)
 
@@ -42,7 +59,7 @@ disclaimerUI <- function(id) {
         ),
         fluidRow(
           column(12, 
-                 checkboxInput(ns("akkoord"), "Ik ga akkoord met de algemene voorwaarden.")
+                 checkboxInput(ns("akkoord"), "Akkoord")
           )
         ),
         fluidRow(
@@ -94,6 +111,7 @@ disclaimerServer <- function(id, parent.session, tabset.id, tab.target, disclaim
     observeEvent(input$ok, {
       if (input$akkoord) {
         updateTabsetPanel(parent.session, tabset.id, selected = tab.target)
+        shinyjs::enable(selector = "#main\\.navbar li a")
       } else {
         showModal(modalDialog(
           title = "Toestemming Vereist",
@@ -101,6 +119,13 @@ disclaimerServer <- function(id, parent.session, tabset.id, tab.target, disclaim
           easyClose = TRUE,
           footer = NULL
         ))
+        shinyjs::disable(selector = "#main\\.navbar li a")
+      }
+    })
+    
+    observe({
+      if (!input$akkoord) {
+        shinyjs::disable(selector = "#main\\.navbar li a")
       }
     })
   })
